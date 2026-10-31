@@ -1,0 +1,67 @@
+{
+  "name": "boardroom-logic",
+  "productName": "Boardroom Logic",
+  "version": "1.0.0",
+  "description": "A free interactive business reasoning game. Read the story, weigh the numbers, call the shots.",
+  "author": "Boardroom Logic",
+  "license": "MIT",
+  "main": "src/main/main.js",
+  "type": "commonjs",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test tests/engine.test.mjs",
+    "test:smoke": "node --test tests/electron-smoke.test.mjs",
+    "build:exe": "electron-builder --win nsis",
+    "build:store": "node scripts/build-store-package.js",
+    "dist": "npm run build:exe && npm run build:store",
+    "make-icons": "node scripts/make-icons.mjs",
+    "screenshots": "node scripts/take-screenshots.mjs"
+  },
+  "build": {
+    "appId": "com.boardroomlogic.app",
+    "productName": "Boardroom Logic",
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "vendor/**/*"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "artifactName": "BoardroomLogic-Setup-${version}-${arch}.${ext}",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Boardroom Logic"
+    },
+    "publish": null
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8",
+    "playwright": "^1.48.0",
+    "playwright": "^1.48.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
+  }
+}

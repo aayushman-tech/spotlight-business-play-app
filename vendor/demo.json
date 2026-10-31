@@ -1,0 +1,246 @@
+{
+ "schemaVersion": 1,
+ "id": "2026-01-05-demo-espresso-cart",
+ "title": "Break Cart Arithmetic",
+ "subtitle": "One empty office corner, two suppliers, and a budget you cannot break.",
+ "publishDate": "2026-01-05",
+ "difficulty": "easy",
+ "tags": ["pricing", "operations"],
+ "reasoningSkills": ["opportunity cost", "unit economics", "evidence vs assumption"],
+ "premise": [
+  "You manage facilities at Corvex Systems, a mid-sized IT consultancy with 120 employees across two floors. The coffee machine of legend died last Tuesday, and morale is measurable: break-room complaints spiked in the last Slack export.",
+  "An empty corner on floor two is free until the new pods arrive in three months, so a coffee cart could slot right in. The catch: everything you buy today comes out of a facilities budget that has exactly 900 dollars unallocated - and your director wants a decision today, not next week.",
+  "Two suppliers want your business. One is cheap and fast, the other is better equipment with a maintenance plan. You have one meeting, a small pile of receipts, and 30 minutes to find the option that actually works."
+ ],
+ "characters": [
+  { "id": "director", "name": "Elena Voss", "role": "Facilities Director - signs the checks, hates surprises", "emoji": "👩‍💼" },
+  { "id": "dana", "name": "Dana Okafor", "role": "Office manager, has counted every coffee cup since 2019", "emoji": "🧑‍🔧" },
+  { "id": "supplier_sprint", "name": "SprintCafé Sales", "role": "Supplier A - cart in four days, price you can't beat", "emoji": "🚚" },
+  { "id": "supplier_ever", "name": "Everbrew Distributors", "role": "Supplier B - commercial-grade machine, service plan", "emoji": "☕" }
+ ],
+ "stats": [
+  { "id": "budget", "label": "Budget left", "start": 900, "min": 0, "max": null, "format": "currency", "failBelow": 0, "failScene": "fail_budget" },
+  { "id": "reputation", "label": "Standing with Elena", "start": 50, "min": 0, "max": 100, "format": "number" }
+ ],
+ "startScene": "s1",
+ "scenes": {
+  "s1": {
+   "chapter": "Day 1 – Morning",
+   "title": "The Coffee Emergency",
+   "arrival": {
+    "type": "chat_message",
+    "from": "dana",
+    "subject": null,
+    "body": "Dana Okafor: 41 complaints in the break-room channel since Tuesday. That is 31 more than the exit-interview metaphor people are now using.\n\nDana Okafor: Also the pods cart space on floor two is free until the lease converts it in 3 months.\n\nDana Okafor: Whatever you do, do it today, Elena scheduled a 'coffee resolution' slot at 4 PM and she does not do second slots.",
+    "icon": "💬"
+   },
+   "narration": "You look at the numbers Dana attached. The company has 120 staff, most of whom buy coffee at the café downstairs at 4.50 dollars a cup. The break-room channel has 41 complaints this week, most creative about DOS-era machine memories. You have 900 dollars unallocated and a 4 PM meeting with Elena Voss.",
+   "exhibits": [
+    { "type": "kpi", "items": [
+     { "label": "Café coffees bought last week", "value": "520 cups", "delta": "+8% vs normal" },
+     { "label": "Unallocated budget", "value": "$900" },
+     { "label": "Deadline", "value": "4 PM" }
+    ] }
+   ],
+   "choices": [
+    { "id": "a", "text": "Call both suppliers before lunch and get written quotes.", "effects": { "reputation": 5 }, "setFlags": ["got_quotes"], "logic": { "quality": 2, "skill": "evidence vs assumption", "why": "You have two competing suppliers and a hard deadline. Written quotes turn a shouting match into arithmetic - you can compare total cost of ownership, not just the sticker price." }, "feedback": "You book two calls for 10:30 and 11:00. Both arrive in your inbox quickly with the machine specs.", "next": "s2" },
+    { "id": "b", "text": "Just order the cheapest cart online and be done by noon.", "effects": { "budget": -620, "reputation": -10 }, "setFlags": ["bought_cheap"], "logic": { "quality": -2, "skill": "unit economics", "why": "You spent 620 of the 900 dollars on a consumer-grade cart with no maintenance plan and no scale for 120 daily users. The café spend problem is not solved, it is relocated." }, "feedback": "The cart ships. It looks fine in the product photos.", "next": "s3" },
+    { "id": "c", "text": "Ask Dana to keep a tally of who buys café coffee so you can size demand properly.", "effects": {}, "setFlags": ["sized_demand"], "logic": { "quality": 1, "skill": "base rates", "why": "Demand data before a purchase decision is good practice - 520 café purchases a week suggests ~45 users per day, which is exactly the number Dana's tally would confirm." }, "feedback": "Dana produces a tally in two hours: 46 regular buyers, 2-3 cups per day.", "next": "s2" }
+   ],
+   "ending": null
+  },
+  "s2": {
+   "chapter": "Day 1 – Late Morning",
+   "title": "Two Quotes, One Corner",
+   "arrival": {
+    "type": "email",
+    "from": "supplier_sprint",
+    "subject": "Quote FWD-114: espresso cart, delivery Thursday",
+    "body": "Hi,\n\nSprintCafé FWD-114 cart: 620 dollars, delivery in four business days, includes one 2 kg bean bag. Warranty: 90 days, consumer grade.\n\nBest,\nSprintCafé Sales",
+    "icon": "✉️"
+   },
+   "narration": "The second quote, from Everbrew, lands at 11:04. A commercial-grade espresso machine, 590 dollars with a 24-month service plan, delivery in ten business days. It requires a plumbed water line, and the facilities team quotes 180 dollars for installation.\n\nElena arrives early for the 4 PM slot and reads both emails over your shoulder. 'Nine hundred dollars covers exactly one of these options. Choose.'",
+   "exhibits": [
+    { "type": "table", "title": "Total cost of ownership, 3 months", "columns": ["Item", "SprintCafé", "Everbrew"], "rows": [
+     ["Machine price", "$620", "$590"],
+     ["Installation", "none needed", "$180"],
+     ["Maintenance", "none offered", "included 24 mo"],
+     ["Delivery time", "4 days", "10 days"],
+     ["Handles 120 staff?", "Consumer grade: risky", "Fit for purpose"]
+    ] }
+   ],
+   "choices": [
+    { "id": "a", "text": "Buy Everbrew. $770 total, plumbed, service plan, no maintenance roulette.", "effects": { "budget": -770, "reputation": 15 }, "setFlags": ["bought_everbrew"], "logic": { "quality": 2, "skill": "unit economics", "why": "Total 3-month cost 770 of the 900 budget, and it is the only option rated for 120 users with 46 daily coffee drinkers. The service plan removes the single point of failure that killed the last machine." }, "feedback": "The work order is approved. Elena says 'good math' in a tone that, for her, is a standing ovation.", "next": "s4" },
+    { "id": "b", "text": "Buy the $620 SprintCafé cart - it lands before the 4 PM optics and leaves $280 spare.", "effects": { "budget": -620, "reputation": -5 }, "setFlags": ["bought_cheap"], "logic": { "quality": -1, "skill": "unit economics", "why": "Consumer-grade hardware for commercial daily volume usually fails. You saved $150 now, but if the cart dies in week 3 there is no service plan and no budget left to replace it." }, "feedback": "The cart is ordered. Elena is happy. Dana is not; she has seen consumer break-room hardware before.", "next": "s3" }
+   ],
+   "ending": null
+  },
+  "s3": {
+   "chapter": "Day 1 – Afternoon",
+   "title": "The Cart Problem",
+   "arrival": {
+    "type": "phone_call",
+    "from": "dana",
+    "subject": null,
+    "body": "Dana calls at 2:40 PM.\n\nDana Okafor: The SprintCafé spec sheet says 'small office, up to 30 users'. We have 46 daily buyers.\n\nDana Okafor: If it breaks, warranty is 90 days, parts in 10. There is no service plan.\n\nDana Okafor: I know Elena already signed off on the invoice. Just so we both know what we know.",
+    "icon": "📞"
+   },
+   "narration": "You have $280 left, an underpowered cart, and six weeks until the corner gets used for the pod building. Elena's 4 PM meeting is still on. Dana is still holding the spec sheet, waiting for you to say something useful.",
+   "exhibits": [
+    { "type": "kpi", "items": [
+     { "label": "Users the cart supports", "value": "30 max" },
+     { "label": "Daily buyers", "value": "46" },
+     { "label": "Current queue at 9 AM", "value": "12 min" },
+     { "label": "Budget left", "value": "$280" }
+    ] }
+   ],
+   "choices": [
+    { "id": "a", "text": "Tell Elena before the meeting. Propose the Everbrew swap with the $280 you preserved.", "effects": { "budget": 0, "reputation": 10 }, "setFlags": ["told_elena_early", "swapped_after"], "logic": { "quality": 1, "skill": "evidence vs assumption", "why": "Self-reporting a mistake with a concrete fix is better than being caught with a queue. $280 plus the swap gets you within budget; the $180 installation cost is covered because the consumer cart is returned for a $280 refund, net cost $0 for the work." }, "feedback": "Elena is unhappy, cancels the tape, but authorises the swap. Your standing drops, then holds.", "next": "s4" },
+    { "id": "b", "text": "Say nothing. See how the cart handles the volume for a week.", "effects": { "reputation": -5 }, "setFlags": ["waited"], "logic": { "quality": -2, "skill": "evidence vs assumption", "why": "The spec sheet is already evidence of the failure mode. Waiting for 46 people to overload a 30-person cart is a plan with a known bad outcome, not an experiment." }, "feedback": "Nothing is decided. The meeting happens with the same ambiguous story everyone already had.", "next": "s5" }
+   ],
+   "ending": null
+  },
+  "s4": {
+   "chapter": "Day 1 – 4 PM",
+   "title": "The Meeting",
+   "arrival": {
+    "type": "visitor",
+    "from": "director",
+    "subject": null,
+    "body": "Elena_Voss enters with a single page: your purchase summary.\n\nElena Voss: Break room, fixed. I want to hear why your number beats the café's 2,340-a-week spend.\n\nElena Voss: Then I want this to survive quarter-end without another meeting.",
+    "icon": "🚪"
+   },
+   "narration": "$2,340 a week at the café is the baseline the whole floor cares about. Your cart or machine pays for itself on arithmetic alone. What remains is the capacity question - 46 users, 120 staff, one corner, three months of pod-building noise ahead.",
+   "choices": [
+    { "id": "a", "text": "Present the capacity plan: 90-second pull time, 46 users at peak staggered arrival.", "effects": { "reputation": 10 }, "setFlags": ["presented_plan"], "logic": { "quality": 2, "skill": "unit economics", "why": "You quantified the queue: 46 buyers across a 60-minute window with 90-second service time is a 1.4-hour backlock at worst - acceptable, and better than the 12-minute café queue you removed." }, "feedback": "Elena signs the summary. The coffee resolution, shockingly, resolves.", "next": "s6" }
+   ],
+   "ending": null
+  },
+  "s5": {
+   "chapter": "Day 1 – 4 PM",
+   "title": "The Meeting, Unarmed",
+   "arrival": {
+    "type": "visitor",
+    "from": "director",
+    "subject": null,
+    "body": "Elena_Voss is in your doorway. She is not holding your summary because you did not write one.\n\nElena Voss: I approved 620 dollars for hardware nobody sized against our headcount.\n\nElena Voss: Give me one reason this is not a payments error I should reverse.",
+    "icon": "🚪"
+   },
+   "narration": "The room is quiet. Dana stands, holding the invoice printout and the spec sheet, and looks at you the way a person looks when they have already written the deck of tomorrow's complaints.",
+   "exhibits": [
+    { "type": "kpi", "items": [
+     { "label": "Budget left", "value": "$280" },
+     { "label": "Standing", "value": "recovering?" }
+    ] }
+   ],
+   "choices": [
+    { "id": "a", "text": "Take the loss: reverse the order, use the $280 plus refund to cover the Everbrew deposit.", "effects": { "reputation": 5 }, "setFlags": ["reversed_hardware"], "logic": { "quality": 1, "skill": "sunk cost fallacy", "why": "Rolling back the consumer purchase to stop compounding the error is correct. $280 left plus a $280 refund gives you exactly enough to keep the right machine moving." }, "feedback": "The order is reversed. Elena says the refund has to charge your budget line. Somewhere in your chest, that feels correct.", "next": "s6" },
+    { "id": "b", "text": "Defend the purchase and ask Elena for $310 more from the facilities reserve.", "effects": { "reputation": -15 }, "setFlags": ["asked_reserve"], "logic": { "quality": -2, "skill": "sunk cost fallacy", "why": "You asked for more money to rescue a decision the spec sheet already refuted. The reserve exists for emergencies, not for buying back a mistake you defended in front of the buyer." }, "feedback": "Elena takes the $310 request, stamps a denial, and the cart story becomes a meeting story.", "next": "s7" }
+   ],
+   "ending": null
+  },
+  "fail_budget": {
+   "chapter": "Day 2",
+   "title": "Out of Budget",
+   "arrival": {
+    "type": "news_alert",
+    "from": "facilities finance",
+    "subject": null,
+    "body": "FACILITIES ALERT: Break-room upgrade budget exhausted. Coffee provision paused pending next quarter review.",
+    "icon": "🚨"
+   },
+   "narration": "The wire transfer bounces. Dana takes the nameplate off the prototype corner and quietly reassembles the old microwave table. Elena cancels the resolution you had scheduled.",
+   "choices": [
+    { "id": "a", "text": "Continue", "next": "end_fail" }
+   ],
+   "ending": null
+  },
+  "s6": {
+   "chapter": "Day 2 – Delivery",
+   "title": "Verdict with Beans",
+   "arrival": {
+    "type": "chat_message",
+    "from": "dana",
+    "subject": null,
+    "body": "Dana Okafor: Machine plumbed at 9:15. First espresso 9:22. Zero queue at 9:40.\n\nDana Okafor: The break-room channel has 2 messages: a thank-you GIF and someone asking about decaf policy.",
+    "icon": "💬"
+   },
+   "narration": "Elena Voss walks by at 11, nodding at the corner where six weeks ago there were complaints. The café downstairs keeps its regulars. The break room has its own again.",
+   "exhibits": [
+    { "type": "bar_chart", "title": "Café coffee spend, last four Mondays vs today", "unit": "$", "data": [
+     { "label": "W1", "value": 2340 }, { "label": "W2", "value": 2530 }, { "label": "W3", "value": 2480 }, { "label": "Today", "value": 380 }
+    ] }
+   ],
+   "choices": [
+    { "id": "a", "text": "Continue", "next": "end_triumph" }
+   ],
+   "ending": null
+  },
+  "s7": {
+   "chapter": "Day 3",
+   "title": "QA Test the Hard Way",
+   "arrival": {
+    "type": "report",
+    "from": "facilities ops",
+    "subject": "Break-room alert - cart capacity breached",
+    "body": "Tuesday 7 AM: 34-person queue in 9 minutes, cart grinder jammed at minute 6.\n\n3 staff walked downstairs to the café queue. 2 were client-facing engineers with a demo at 10.",
+    "icon": "📋"
+   },
+   "narration": "The consumer cart handles exactly the number the spec sheet says, then stops. Dana has already logged the failure, timestamped, with a photo of the jammed hopper.",
+   "exhibits": [
+    { "type": "line_chart", "title": "Queue length during the 9 AM peak", "unit": "people", "data": [
+     { "label": "8:50", "value": 4 }, { "label": "8:55", "value": 9 }, { "label": "9:00", "value": 16 }, { "label": "9:05", "value": 34 }
+    ] }
+   ],
+   "choices": [
+    { "id": "a", "text": "Continue", "next": "end_mixed" }
+   ],
+   "ending": null
+  },
+  "end_triumph": {
+   "chapter": "Day 3",
+   "title": "Victory Lap, With Decaf Policy",
+   "arrival": {
+    "type": "memo",
+    "from": "director",
+    "subject": "Break-room upgrade: approved and closed",
+    "body": "MEMO\n\nBreak room hardware: purchased, installed, in use.\nCafé spend: approximately 80% down since Monday.\nCase closed by me, mostly because the arithmetic did this itself.\n\n- Elena Voss",
+    "icon": "📝"
+   },
+   "narration": "You have a working break room, a standing-with-Elena no one has to whisper about, and a budget that closed the quarter with $130 unused.",
+   "ending": { "kind": "triumph", "title": "Arithmetic Wins", "summary": "You bought the only option sized for 46 daily users, preserved enough budget for installation, and quantified the capacity plan. Elena trusted the numbers, and the numbers held. The café spend fell 80% in week one." }
+  },
+  "end_mixed": {
+   "chapter": "Day 3",
+   "title": "Half a Win",
+   "arrival": {
+    "type": "email",
+    "from": "director",
+    "subject": "Re: hardware",
+    "body": "The cart stays until the reserve committee meets next month.\n\nThe café spend is down 40%. The complaint channel is at 6 and holding.",
+    "icon": "✉️"
+   },
+   "narration": "The break room is better, not fixed. Dana schedules 'grinder jam protocol' training. Elena has not yet removed the reserve request you filed from the 'opened' column.",
+   "ending": { "kind": "mixed", "title": "Better, Not Fixed", "summary": "You defended a purchase the spec sheet had already refuted, then spent a morning proving it. The reserve request is now your problem rather than your win, but smaller numbers count for half a story." }
+  },
+  "end_fail": {
+   "chapter": "Day 2",
+   "title": "No Coffee, No Money",
+   "arrival": {
+    "type": "news_alert",
+    "from": "facilities finance",
+    "subject": null,
+    "body": "BREAKING: Facilities unallocated funds: $0.00. Pending wire transfers: 1 (rejected).",
+    "icon": "🚨"
+   },
+   "narration": "The machine never arrives. The cart does not exist. The café continues at $2,340 a week, and Dana's tally reopens with a vengeance.",
+   "ending": { "kind": "failure", "title": "Out of Money, Out of Options", "summary": "Your arithmetic outran your budget. When the wire bounced, there was nothing to reverse, nothing to dispatch, and no coffee story to tell at 4 PM." }
+  }
+ },
+ "debriefTakeaways": [
+  "Total cost of ownership beats shelving price: service plans and installation are part of the price.",
+  "Demand evidence before purchase: 46 daily buyers is data the spec sheet should meet, not hope.",
+  "Budget is a constraint for decisions, not a licence to ignore them.",
+  "Sunk cost is not a reason to defend a failed choice; reversing early preserves the fix."
+ ]
+}

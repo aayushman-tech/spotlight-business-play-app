@@ -1,0 +1,11 @@
+{
+  "_comment": "Boardroom Logic - Microsoft Store identity. Fill in the REAL values from Partner Center after reserving the app name (Partner Center > Apps and games > New product > MSIX or windows app), then rebuild: npm run build:store. These placeholders are used verbatim in AppxManifest.xml; the Store will re-sign and assign the final identity when you submit the MSIX through Partner Center, so for MSIX submission these may keep placeholders UNLESS you choose to add the app to the Store listing flow yourself.",
+  "identityName": "XXXXXXXXX.BoardroomLogic",
+  "publisher": "CN=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+  "publisherDisplayName": "YOUR PUBLISHER DISPLAY NAME",
+  "notes": [
+    "identityName: from Partner Center 'Package/Identity/Packaging/Identity Name' (e.g. 12345ABCD.BoardroomLogic).",
+    "publisher: from Partner Center 'Package/Identity/Packaging/Publisher' (the CN= value shown there).",
+    "publisherDisplayName: your display name exactly as registered in Partner Center."
+  ]
+}
