@@ -1,8 +1,11 @@
-// tools/make-icons.js - Renders build/logo.svg and build/wide-logo.svg to:
-//   1. build/appx/ - Complete Microsoft Store AppX / MSIX tile asset set with all scale & targetsize variants.
-//   2. build/ - icon.png (512x512) and multi-resolution icon.ico (16..256).
-//   3. store/ - Partner Center Store listing images (logo 300x300, poster 720x1080, box art 1080x1080).
-// Reproducible via: node tools/make-icons.js
+// tools/make-icons.js - High-fidelity icon & tile generator using HTML5 Canvas in Electron.
+// Renders SVG vectors directly onto canvas elements with sub-pixel smoothing,
+// avoiding all window size limits, viewports, and browser scrollbars.
+//
+// Outputs:
+//   1. build/appx/ - 56 complete Store AppX/MSIX tile PNGs (all scales and target sizes)
+//   2. build/ - icon.png (512x512) and native multi-res icon.ico (16..256px with 32-bit DIB + PNG)
+//   3. store/ - Partner Center Store listing images (logo 300x300, boxart 1080x1080, poster 720x1080)
 "use strict";
 
 const fs = require("node:fs");
@@ -21,16 +24,53 @@ const storeDir = path.join(root, "store");
 fs.mkdirSync(appxDir, { recursive: true });
 fs.mkdirSync(storeDir, { recursive: true });
 
-function buildIco(pngs) {
-  // pngs: [{size, data}] sorted ascending. ICO format with PNG-embedded entries.
-  const entries = pngs.map((p) => ({ size: p.size, data: p.data }));
+function makeDib(w, h, rgba) {
+  const header = Buffer.alloc(40);
+  header.writeUInt32LE(40, 0); // biSize
+  header.writeInt32LE(w, 4);   // biWidth
+  header.writeInt32LE(h * 2, 8); // biHeight (2 * h for icon DIBs)
+  header.writeUInt16LE(1, 12);  // biPlanes
+  header.writeUInt16LE(32, 14); // biBitCount
+  header.writeUInt32LE(0, 16);  // biCompression (BI_RGB)
+  header.writeUInt32LE(w * h * 4, 20); // biSizeImage
+
+  // XOR mask: bottom row to top row, BGRA
+  const xor = Buffer.alloc(w * h * 4);
+  for (let y = 0; y < h; y++) {
+    const srcY = h - 1 - y;
+    for (let x = 0; x < w; x++) {
+      const srcIdx = (srcY * w + x) * 4;
+      const dstIdx = (y * w + x) * 4;
+      xor[dstIdx + 0] = rgba[srcIdx + 2]; // B
+      xor[dstIdx + 1] = rgba[srcIdx + 1]; // G
+      xor[dstIdx + 2] = rgba[srcIdx + 0]; // R
+      xor[dstIdx + 3] = rgba[srcIdx + 3]; // A
+    }
+  }
+
+  // AND mask: 1 bit per pixel, padded to 32 bits per row
+  const andRowBytes = Math.ceil(w / 32) * 4;
+  const andMask = Buffer.alloc(andRowBytes * h, 0);
+
+  return Buffer.concat([header, xor, andMask]);
+}
+
+function buildWindowsIco(frames) {
+  // frames: [{ size, pngBuffer, rgba }] sorted ascending
+  const entries = frames.map((f) => {
+    const data = f.size === 256 ? f.pngBuffer : makeDib(f.size, f.size, f.rgba);
+    return { size: f.size, data };
+  });
+
   const header = Buffer.alloc(6);
   header.writeUInt16LE(0, 0); // reserved
   header.writeUInt16LE(1, 2); // 1 = ICO
   header.writeUInt16LE(entries.length, 4);
+
   const dirSize = 16 * entries.length;
   let offset = 6 + dirSize;
   const dir = Buffer.alloc(dirSize);
+
   entries.forEach((e, i) => {
     const base = i * 16;
     dir.writeUInt8(e.size >= 256 ? 0 : e.size, base + 0); // width
@@ -43,6 +83,7 @@ function buildIco(pngs) {
     dir.writeUInt32LE(offset, base + 12);
     offset += e.data.length;
   });
+
   return Buffer.concat([header, dir, ...entries.map((e) => e.data)]);
 }
 
@@ -142,11 +183,6 @@ const tasks = [
   ["store", "poster-720x1080.png", 720, 1080, false],
 ];
 
-const makeHtml = (svg) => `<!doctype html><html><head><style>
-  html, body { margin: 0; padding: 0; background: transparent; width: 100%; height: 100%; overflow: hidden; }
-  svg { display: block; width: 100vw; height: 100vh; }
-</style></head><body>${svg}</body></html>`;
-
 async function main() {
   const playwright = await import("playwright");
   const electron = playwright._electron;
@@ -158,15 +194,41 @@ async function main() {
 
   try {
     const page = await app.firstWindow();
+    const b64Square = Buffer.from(svgSquare, "utf8").toString("base64");
+    const b64Wide = Buffer.from(svgWide, "utf8").toString("base64");
     const icoFrames = [];
 
     for (const [folder, filename, w, h, isWide] of tasks) {
-      const html = makeHtml(isWide ? svgWide : svgSquare);
-      await page.setContent(html);
-      await page.setViewportSize({ width: w, height: h });
-      await page.waitForTimeout(40);
-      const buf = await page.screenshot({ type: "png", omitBackground: false });
+      const b64 = isWide ? b64Wide : b64Square;
+      const needRgba = folder === "build" && filename.startsWith("icon-") && w < 256;
+      const res = await page.evaluate(async ({ b64, width, height, needRgba }) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL("image/png");
+            let rgba = null;
+            if (needRgba) {
+              const imgData = ctx.getImageData(0, 0, width, height);
+              rgba = Array.from(imgData.data);
+            }
+            resolve({
+              pngBase64: dataUrl.split(",")[1],
+              rgba
+            });
+          };
+          img.onerror = () => reject(new Error("Failed to load SVG into canvas"));
+          img.src = "data:image/svg+xml;base64," + b64;
+        });
+      }, { b64, width: w, height: h, needRgba });
 
+      const buf = Buffer.from(res.pngBase64, "base64");
       let targetDir;
       if (folder === "appx") targetDir = appxDir;
       else if (folder === "store") targetDir = storeDir;
@@ -178,16 +240,16 @@ async function main() {
       // Collect ICO resolutions
       if (folder === "build" && filename.startsWith("icon-")) {
         const size = parseInt(filename.replace("icon-", "").replace(".png", ""), 10);
-        icoFrames.push({ size, data: buf });
+        icoFrames.push({ size, pngBuffer: buf, rgba: res.rgba ? new Uint8Array(res.rgba) : null });
       }
     }
 
-    // Build multi-res icon.ico
+    // Build multi-res Windows icon.ico
     icoFrames.sort((a, b) => a.size - b.size);
-    const icoBuf = buildIco(icoFrames);
+    const icoBuf = buildWindowsIco(icoFrames);
     fs.writeFileSync(path.join(root, "build", "icon.ico"), icoBuf);
 
-    console.log(`Successfully generated:`);
+    console.log(`Successfully generated high-fidelity icons (zero scrollbars, pure canvas):`);
     console.log(`  - ${tasks.filter((t) => t[0] === "appx").length} AppX assets in build/appx/`);
     console.log(`  - build/icon.png (512x512) and build/icon.ico (${icoFrames.map((f) => f.size).join(",")}px)`);
     console.log(`  - Partner Center Store assets in store/ (logo, boxart, poster)`);
