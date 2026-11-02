@@ -4,148 +4,104 @@
   <meta charset="utf-8" />
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'" />
-  <!-- frame-ancestors and sandbox can't be set via meta; equivalent protection is provided by
-       the main-process will-navigate/open handlers and the sandboxed webPreferences. -->
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Boardroom Logic</title>
+  <title>Spotlight Business Play</title>
   <link rel="stylesheet" href="styles.css" />
   <script type="module" src="js/app.js"></script>
 </head>
 <body data-textsize="3">
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- ============ ONE-LINE HEADER ============ -->
   <header class="topbar">
-    <button id="brand" class="brand" aria-label="Boardroom Logic – go to home">
-      <span class="brand-mark" aria-hidden="true">▦</span>
-      <span class="brand-name">Boardroom Logic</span>
-    </button>
+    <div class="brand">
+      <span class="brand-name">SPOTLIGHT BUSINESS PLAY</span>
+    </div>
     <div class="topbar-right">
       <span id="net-indicator" class="net-indicator" role="status" aria-live="polite">
-        <span class="dot" aria-hidden="true"></span><span id="net-label">checking…</span>
+        <span class="dot" aria-hidden="true"></span><span id="net-label">Online – up to date</span>
       </span>
-      <button id="btn-case" class="ghost-btn" aria-expanded="false" aria-controls="case-panel">
-        📁 Case File <span id="case-count" class="badge-count" hidden>0</span>
-      </button>
-      <button id="btn-settings" class="ghost-btn" aria-label="Settings">⚙︎ Settings</button>
+      <button id="btn-settings" class="ghost-btn icon-btn" aria-label="Settings">⚙ Settings</button>
     </div>
   </header>
 
-  <aside id="case-panel" class="case-panel" role="region" aria-label="Case file" hidden>
-    <div class="case-panel-head">
-      <h2>Case File</h2>
-      <button id="btn-case-close" class="ghost-btn" aria-label="Close case file">✕</button>
-    </div>
-    <p class="case-empty" id="case-empty">Picked-up facts and figures you can always revisit.</p>
-    <ul id="case-list" class="case-list"></ul>
-  </aside>
-
   <main id="main" class="main">
 
-    <!-- ============ HOME ============ -->
+    <!-- ============ HOME SCREEN ============ -->
     <section id="screen-home" class="screen" aria-labelledby="home-heading">
-      <h1 id="home-heading" class="visually-hidden">Home</h1>
+      <h1 id="home-heading" class="visually-hidden">Spotlight Business Play Stories</h1>
       <div id="home-banner" class="banner" role="status" hidden></div>
-      <div id="home-today" class="today-slot" aria-busy="true">
-        <div class="card card-loading">
-          <p class="muted">Checking the wire for new stories…</p>
-        </div>
+      <div id="stories-list" class="stories-list" role="list">
+        <!-- Rendered dynamically: Number, Title (+ Subtitle, ~35 min), PLAY / Continue button -->
       </div>
-      <div class="home-columns">
-        <section aria-labelledby="archive-heading" class="archive-col">
-          <h2 id="archive-heading" class="section-title">Archive</h2>
-          <div id="archive-list" class="archive-list"></div>
-          <p id="archive-empty" class="muted">Published stories appear here.</p>
-        </section>
-        <section aria-labelledby="profile-heading" class="profile-col">
-          <h2 id="profile-heading" class="section-title">Career Record</h2>
-          <div id="profile-card" class="card profile-card"></div>
-        </section>
-      </div>
-      <button id="btn-refresh-home" class="secondary-btn">↻ Look for new stories</button>
     </section>
 
-    <!-- ============ STORY INTRO ============ -->
-    <section id="screen-intro" class="screen" hidden aria-labelledby="intro-story-title">
-      <article class="intro card">
-        <p class="kicker">New Assignment</p>
-        <h1 id="intro-story-title"></h1>
-        <p id="intro-story-subtitle" class="subtitle"></p>
-        <div id="intro-premise"></div>
-        <h2 class="section-title">Cast</h2>
-        <ul id="intro-characters" class="characters"></ul>
-        <div class="intro-meta">
-          <span id="intro-difficulty" class="pill"></span>
-          <span id="intro-minutes" class="pill"></span>
-          <span id="intro-skills" class="skills-line"></span>
+    <!-- ============ PLAY SCREEN ============ -->
+    <section id="screen-play" class="screen" hidden aria-label="Story Scene">
+      <div class="play-header">
+        <div class="play-meta">
+          <span id="chapter-marker" class="chapter-marker"></span>
+          <h2 id="scene-title" class="scene-title"></h2>
         </div>
-        <div class="intro-actions">
-          <button id="btn-begin" class="primary-btn">Begin ▸</button>
-          <button id="btn-continue-save" class="ghost-btn" hidden>Continue where I left off</button>
-          <button id="btn-back-home-1" class="ghost-btn">◂ Home</button>
+        <div class="play-top-actions">
+          <button id="btn-restart-story" class="ghost-btn" title="Restart this story from Scene 1">↻ Restart</button>
+          <button id="btn-back-home" class="ghost-btn">◂ Back to Stories</button>
+        </div>
+      </div>
+
+      <article class="scene-card">
+        <div id="arrival-slot" class="arrival-slot"></div>
+        <div id="exhibits-slot" class="exhibits-slot"></div>
+        <div id="narration-slot" class="narration-slot"></div>
+        <div id="choices-slot" class="choices-slot" role="group" aria-label="Choices"></div>
+      </article>
+    </section>
+
+    <!-- ============ WIN SCREEN (CELEBRATION) ============ -->
+    <section id="screen-win" class="screen" hidden aria-labelledby="win-title">
+      <article class="outcome-card win-card">
+        <div class="outcome-kicker kicker-win">★ BREAKTHROUGH</div>
+        <h1 id="win-title" class="outcome-title"></h1>
+        <p id="win-summary" class="outcome-summary"></p>
+
+        <div class="takeaways-box">
+          <h2>What You Learned</h2>
+          <ul id="win-takeaways" class="takeaways-list"></ul>
+        </div>
+
+        <div class="outcome-actions">
+          <button id="btn-win-replay" class="secondary-btn">↻ Play Again</button>
+          <button id="btn-win-home" class="primary-btn">Back to Stories ▶</button>
         </div>
       </article>
     </section>
 
-    <!-- ============ PLAY ============ -->
-    <section id="screen-play" class="screen" hidden aria-label="Story">
-      <div id="hud" class="hud" role="group" aria-label="Story stats"></div>
-      <div class="play-columns">
-        <div class="play-main">
-          <p id="chapter-marker" class="chapter-marker"></p>
-          <div id="arrival-slot" aria-live="polite"></div>
-          <div id="exhibits-slot" class="exhibits"></div>
-          <div id="narration-slot" class="narration"></div>
-          <div id="choices-slot" class="choices" role="group" aria-label="Your options"></div>
-        </div>
-      </div>
-      <div id="feedback-layer" class="feedback-layer" hidden>
-        <div class="feedback-card card" role="dialog" aria-modal="true" aria-labelledby="feedback-text">
-          <p class="kicker">Consequences</p>
-          <p id="feedback-text"></p>
-          <button id="btn-ack-feedback" class="primary-btn">Continue ▸</button>
-        </div>
-      </div>
-      <div class="play-nav">
-        <button id="btn-save-exit" class="ghost-btn">💾 Save &amp; exit</button>
-        <button id="btn-restart-story" class="ghost-btn">↻ Restart story</button>
-      </div>
-    </section>
+    <!-- ============ LOSE SCREEN (GAME OVER) ============ -->
+    <section id="screen-lose" class="screen" hidden aria-labelledby="lose-title">
+      <article class="outcome-card lose-card">
+        <div class="outcome-kicker kicker-lose">✕ GAME OVER</div>
+        <h1 id="lose-title" class="outcome-title"></h1>
+        <p id="lose-summary" class="outcome-summary"></p>
 
-    <!-- ============ DEBRIEF ============ -->
-    <section id="screen-debrief" class="screen" hidden aria-labelledby="debrief-title">
-      <article class="card debrief">
-        <p id="debrief-kind" class="kicker kicker-big"></p>
-        <h1 id="debrief-title"></h1>
-        <p id="debrief-summary" class="debrief-summary"></p>
-        <div class="debrief-grid">
-          <div class="card inset">
-            <h2>Final Position</h2>
-            <div id="debrief-stats"></div>
-          </div>
-          <div class="card inset score-card">
-            <h2>Logic Score</h2>
-            <p id="debrief-score" class="score-number"></p>
-            <p id="debrief-rank" class="score-rank"></p>
-            <p id="debrief-personal-best" class="muted"></p>
-            <h3>Skills practised</h3>
-            <ul id="debrief-skills" class="skills-list"></ul>
-          </div>
+        <div class="reason-box">
+          <h2>Why It Happened</h2>
+          <p id="lose-reason" class="reason-text"></p>
         </div>
-        <h2 class="section-title">Decision Review</h2>
-        <ol id="debrief-recap" class="recap"></ol>
-        <h2 class="section-title">Takeaways</h2>
-        <ul id="debrief-takeaways" class="takeaways"></ul>
-        <div class="intro-actions">
-          <button id="btn-replay" class="secondary-btn">↻ Replay</button>
-          <button id="btn-back-home-2" class="primary-btn">◂ Home</button>
+
+        <div class="outcome-actions">
+          <button id="btn-lose-restart" class="primary-btn">Start Over ↻</button>
+          <button id="btn-lose-home" class="ghost-btn">Back to Stories</button>
         </div>
       </article>
     </section>
 
-    <!-- ============ SETTINGS ============ -->
+    <!-- ============ SETTINGS SCREEN ============ -->
     <section id="screen-settings" class="screen" hidden aria-labelledby="settings-heading">
-      <article class="card settings">
-        <h1 id="settings-heading">Settings</h1>
+      <article class="card settings-card">
+        <div class="settings-head">
+          <h1 id="settings-heading">Settings</h1>
+          <button id="btn-settings-close" class="ghost-btn">✕ Close</button>
+        </div>
 
         <div class="setting-row">
           <label for="set-theme">Theme</label>
@@ -159,15 +115,10 @@
         <div class="setting-row">
           <label for="set-textsize">Text size</label>
           <div class="stepper" role="group" aria-label="Text size">
-            <button class="ghost-btn" data-step="-1" aria-label="Smaller text">−</button>
+            <button class="ghost-btn" id="btn-font-smaller" aria-label="Smaller text">−</button>
             <span id="textsize-value" aria-live="polite">3</span>
-            <button class="ghost-btn" data-step="1" aria-label="Larger text">+</button>
+            <button class="ghost-btn" id="btn-font-larger" aria-label="Larger text">+</button>
           </div>
-        </div>
-
-        <div class="setting-row">
-          <label for="set-motion">Reduce motion</label>
-          <input id="set-motion" type="checkbox" />
         </div>
 
         <div class="setting-actions">
@@ -175,22 +126,22 @@
           <button id="btn-reset-progress" class="danger-btn">Reset all progress</button>
         </div>
 
-        <div class="about">
+        <div class="about-box">
           <h2 class="section-title">About</h2>
-          <p id="about-version"></p>
-          <p>Free game. No ads, no accounts, no analytics, no in-app purchases, no tracking.</p>
-          <p>Progress, settings and cached stories live on this device only; the app fetches story text only
-            from GitHub.</p>
-          <p><a id="link-privacy" href="#" data-external="1">Privacy policy</a></p>
+          <p id="about-version" class="muted"></p>
+          <p>90s-style business adventure game. Deterministic decisions, authentic business reasoning.</p>
+          <p>No ads, no accounts, no analytics, no tracking. Progress and settings live only on this device.</p>
+          <p><a id="link-privacy" href="#" data-external="1">Privacy Policy</a></p>
         </div>
 
-        <div class="intro-actions">
-          <button id="btn-back-home-3" class="ghost-btn">◂ Back</button>
+        <div class="settings-footer">
+          <button id="btn-settings-back" class="primary-btn">◂ Back to Stories</button>
         </div>
       </article>
     </section>
 
   </main>
+
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

@@ -1,0 +1,2254 @@
+{
+ "schemaVersion": 2,
+ "id": "garage-to-glory",
+ "title": "Garage to Glory",
+ "subtitle": "Build it. Lose it. Win it back.",
+ "publishDate": "2026-11-02",
+ "tags": [
+  "technology",
+  "strategy",
+  "comeback",
+  "hardware",
+  "leadership"
+ ],
+ "premise": "It is 1976 in Los Altos, California. In a drafty garage smelling of soldering rosin and cold coffee, you and your best friend Wes have created something that has never existed before: a personal computer designed for ordinary people. You are Sam Hollis, twenty-one years old, possessing no capital, no business diploma, and an uncompromising obsession with perfection. Over the next twenty years, you will build an empire, face ruthless industrial giants, make painful errors, get ousted from your own creation, and claw your way back from the wilderness to orchestrate the most celebrated turnaround in commercial history.",
+ "characters": [
+  {
+   "id": "sam",
+   "name": "Sam Hollis",
+   "role": "Founder & Visionary",
+   "emoji": "🚀"
+  },
+  {
+   "id": "wes",
+   "name": "Wes Ortega",
+   "role": "Co-Founder & Chief Engineer",
+   "emoji": "🛠️"
+  },
+  {
+   "id": "dalton",
+   "name": "Mrs. Dalton",
+   "role": "Venture Partner & Board Mentor",
+   "emoji": "💼"
+  },
+  {
+   "id": "crane",
+   "name": "Victor Crane",
+   "role": "Corporate Consumer Executive",
+   "emoji": "👔"
+  },
+  {
+   "id": "terrell",
+   "name": "Paul Terrell",
+   "role": "Byte Shop Retailer",
+   "emoji": "🏪"
+  },
+  {
+   "id": "elena",
+   "name": "Elena Vance",
+   "role": "Lead Industrial Designer",
+   "emoji": "🎨"
+  },
+  {
+   "id": "brody",
+   "name": "Marcus Brody",
+   "role": "Titan Systems Vice President",
+   "emoji": "🏢"
+  }
+ ],
+ "startScene": "s001",
+ "scenes": {
+  "s001": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "The Blue Glow",
+   "arrival": {
+    "type": "visitor",
+    "from": "wes",
+    "subject": "The monitor is alive",
+    "body": "Wes throws open the side garage door with a wide grin. He wipes dark thermal paste across his faded denim shirt. On your plywood workbench, beneath a swinging work light, a repurposed wooden breadboard hums with quiet power. A black-and-white television flickers. Crisp green letters shine on screen. For the first time in Silicon Valley history, a home machine responds immediately to a typewriter keyboard.",
+    "icon": "🚪"
+   },
+   "narration": "For six exhausting months, your parents' garage smelled of scorched silicon and rosin flux. Now the machine is completely stable. Wes wants to hand out the schematics for free at the local Homebrew Computer Club. Outside in the driveway, an electronics merchant has offered five hundred dollars in cash right now for the exclusive blueprint. But you see something far greater: an intuitive household appliance that non-technical families can enjoy in their living rooms. Every wire was routed by hand across the board. You can smell the sharp ozone in the evening air. This machine is your ticket out of obscurity.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Start Orchard Computers and manufacture the finished units ourselves.",
+     "next": "s004"
+    },
+    {
+     "id": "b",
+     "text": "Take the quick cash and sell the exclusive blueprint to the merchant.",
+     "next": "s002"
+    }
+   ]
+  },
+  "s002": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "Signing Away Tomorrow",
+   "arrival": {
+    "type": "contract",
+    "from": "terrell",
+    "subject": "Exclusive Blueprint & Patent Assignment",
+    "body": "The electronics merchant places a one-page contract onto the wooden table beside your workbench. Five crisp one-hundred dollar bills sit beside his ballpoint pen. The legal text is unyielding: in exchange for five hundred dollars cash, you assign all worldwide patents, manufacturing rights, and future commercial claims to his retail firm.",
+    "icon": "📄"
+   },
+   "narration": "Five hundred dollars feels like an enormous relief when your bank account holds nine dollars and rent is past due. Wes watches you quietly from the doorway with folded arms. If you sign this agreement, the machine you labored over all winter belongs to someone else. You can walk away with guaranteed rent today, or keep the rights and take on the terrifying risk of building a real company from scratch.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Sign the assignment contract and pocket the five hundred dollars.",
+     "next": "s003"
+    },
+    {
+     "id": "b",
+     "text": "Refuse the merchant's contract and commit to building Orchard Computers.",
+     "next": "s004"
+    }
+   ]
+  },
+  "s003": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "Sold Too Soon",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Daily Electronics News",
+    "subject": "Merchant's Computer Firm Acquired for $54M",
+    "body": "Three years later, the electronics merchant sells his company to a global conglomerate for fifty-four million dollars. His business was founded entirely upon the garage motherboard blueprints you sold him for five hundred dollars. The morning paper notes that the inventor was never named in the filing.",
+    "icon": "📰"
+   },
+   "narration": "You traded your life's greatest invention for one month of grocery money. The merchant mass-produced your board in Asia, packaged it in a metal box, and built a massive fortune on your late-night labor. You and Wes spent the decade working hourly customer service jobs, watching someone else live your dream.",
+   "ending": {
+    "kind": "lose",
+    "title": "Sold Your Life's Work for Pocket Change",
+    "summary": "You sold your foundational blueprints for five hundred dollars, allowing an outside merchant to reap fifty-four million dollars from your invention.",
+    "reason": "Never sell your foundational technology for short-term pocket cash before testing the market. Equity and long-term ownership are where real enterprise value resides.",
+    "lesson": "When you invent the future, hold onto the equity."
+   }
+  },
+  "s004": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "The Price Tag",
+   "arrival": {
+    "type": "memo",
+    "from": "wes",
+    "subject": "Component Bill of Materials (BOM)",
+    "body": "Wes leaves a detailed yellow legal pad beside your soldering iron. Every Orchard I motherboard requires sixty dynamic RAM chips, custom bus sockets, a crystal oscillator, and a transformer. Raw parts cost totals two hundred and twenty dollars per board.",
+    "icon": "📝"
+   },
+   "exhibits": [
+    {
+     "type": "table",
+     "title": "Orchard I Unit Economics Breakdown",
+     "columns": [
+      "Pricing Tier",
+      "Retail Price",
+      "Unit Cost",
+      "Gross Profit",
+      "Gross Margin %"
+     ],
+     "rows": [
+      [
+       "Loss Leader",
+       "$250.00",
+       "$220.00",
+       "$30.00",
+       "12.0%"
+      ],
+      [
+       "Fair Consumer",
+       "$666.66",
+       "$220.00",
+       "$446.66",
+       "67.0%"
+      ],
+      [
+       "Luxury Specialist",
+       "$1,200.00",
+       "$220.00",
+       "$980.00",
+       "81.6%"
+      ]
+     ]
+    }
+   ],
+   "narration": "Wes wants to price the board at two hundred and fifty dollars to help cash-strapped college hobbyists. But you understand basic business economics: twelve percent gross margin leaves zero cash for workspace rent, shipping boxes, test meters, or bad memory chips. If you price too low, the very first defective batch will wipe out your bank balance before you assemble thirty units. You look at the numbers etched on the yellow pad. A business without healthy cash margins is just an expensive hobby waiting to die.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Price at $666.66 to secure healthy 67% margins for reinvestment.",
+     "next": "s004b"
+    },
+    {
+     "id": "b",
+     "text": "Follow Wes's advice and price at $250.00 to maximize unit sales.",
+     "next": "s005"
+    }
+   ]
+  },
+  "s004b": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "The Homebrew Demonstration",
+   "arrival": {
+    "type": "visitor",
+    "from": "Homebrew Club Host",
+    "subject": "Auditorium Demonstration",
+    "body": "Three hundred passionate computer hobbyists pack the Stanford Linear Accelerator auditorium. Engineers from Fairchild and Hewlett-Packard stand on chairs to peer over the crowd. On the demonstration table, your Orchard I motherboard renders smooth color graphics on a color TV without a single glitch. The room falls completely silent.",
+    "icon": "🚪"
+   },
+   "narration": "The audience surges forward with eager questions. Club members wave twenty-dollar bills in the air, wanting to take home prototype boards right off the desk. Wes is excited and suggests giving away five spare boards to club officers to build goodwill. But you know that Orchard needs verified purchase commitments and paying customers, not free giveaways. You speak with quiet, relentless confidence. You explain how this machine will soon sit on every school desk in California.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Collect formal order deposits and retail contact cards from serious buyers.",
+     "next": "s007"
+    },
+    {
+     "id": "b",
+     "text": "Hand out your only prototype boards for free to win club popularity.",
+     "next": "s005"
+    }
+   ]
+  },
+  "s005": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "The Margin Trap",
+   "arrival": {
+    "type": "report",
+    "from": "wes",
+    "subject": "Quality Audit – Discount RAM Failure Rate",
+    "body": "Our budget component supplier sent two hundred discounted dynamic RAM chips. Wes tests the batch on his oscilloscope: thirty-eight chips are defective under thermal load. At a thirty-dollar gross margin per board, replacing bad chips wipes out the entire profit on our next five completed units.",
+    "icon": "📋"
+   },
+   "narration": "Orders trickled in, but every delivery drained your cash reserves. Because you had no margin cushion, you could not afford automated testing equipment or reliable replacement components. When early customers called about memory parity crashes, you lacked the cash to issue refunds or replace their boards.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Ship the remaining glitchy boards anyway to collect customer checks.",
+     "next": "s006"
+    },
+    {
+     "id": "b",
+     "text": "Halt shipments, apologize to customers, and re-price at $666.66.",
+     "next": "s007"
+    }
+   ]
+  },
+  "s006": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "Defect Disaster",
+   "arrival": {
+    "type": "visitor",
+    "from": "Angry Customers",
+    "subject": "Legal Summons and Demand for Refunds",
+    "body": "Two dozen furious electronics hobbyists gather in your parents' driveway demanding their money back. The county sheriff arrives an hour later to serve a formal civil summons for delivering uncertified, non-functional electronics.",
+    "icon": "🚨"
+   },
+   "narration": "Operating with razor-thin margins left you zero financial buffer for manufacturing variance. When the discount memory failed in the field, refund claims instantly exceeded your total bank deposits. Orchard Computers collapsed before your fiftieth machine was assembled.",
+   "ending": {
+    "kind": "lose",
+    "title": "Crushed by Thin Margins and High Defect Rates",
+    "summary": "Pricing at near-cost meant a small component failure rate consumed all company cash and triggered fatal customer chargebacks.",
+    "reason": "Gross margins are your company's safety cushion. In hardware manufacturing, healthy margins fund scrap buffers, warranty replacements, and engineering redesigns.",
+    "lesson": "Never sacrifice gross margin for early unit volume."
+   }
+  },
+  "s007": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "The Byte Shop Pitch",
+   "arrival": {
+    "type": "phone_call",
+    "from": "terrell",
+    "subject": "Mountain View Meeting Invitation",
+    "body": "Paul Terrell, founder of The Byte Shop chain, calls your garage telephone. He heard enthusiastic rumors from the Homebrew demonstration. He invites you to bring your prototype down to his Mountain View storefront at three o'clock sharp.",
+    "icon": "📞"
+   },
+   "narration": "You have one afternoon to convince the most influential computer retailer in northern California. Wes suggests carrying the raw circuit board in an old shoebox. You firmly reject that idea. You borrow a crisp television monitor, neatly bundle the cabling, and prepare a live demonstration program that calculates retail loan interest directly on screen in front of Terrell. Terrell leans over his counter with genuine curiosity. You type a loop that fills the screen with mathematical curves.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Demonstrate a complete, polished system with live working software.",
+     "next": "s010"
+    },
+    {
+     "id": "b",
+     "text": "Spend your last $400 on a highway billboard hoping consumers notice Orchard.",
+     "next": "s008"
+    }
+   ]
+  },
+  "s008": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "The Empty Highway",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Highway 101 Outdoor Displays",
+    "subject": "Invoice #8841 – Outdoor Billboard",
+    "body": "Your billboard on Highway 101 reads: 'Orchard Computers – The Future in Your Home.' Thousands of commuters rush past at sixty miles an hour without taking note. Not a single prospective buyer calls your home telephone.",
+    "icon": "📰"
+   },
+   "narration": "You exhausted your remaining cash reserves on broadcast advertising before securing store distribution or finished inventory. When interested drivers looked for where to buy the computer, no retail store carried it. Terrell signed an exclusive wholesale deal with another builder while your garage phone remained silent.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Borrow emergency money from a predatory lender to keep the shop open.",
+     "next": "s009"
+    },
+    {
+     "id": "b",
+     "text": "Admit the advertising mistake, pack the prototype, and pitch Paul Terrell.",
+     "next": "s010"
+    }
+   ]
+  },
+  "s009": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "Out of Runway",
+   "arrival": {
+    "type": "visitor",
+    "from": "Landlord",
+    "subject": "Lockout & Eviction Notice",
+    "body": "Your parents' landlord clamps a heavy padlock across the garage door. The bank repossesses your dual-trace oscilloscope and soldering irons to settle unpaid advertising bills. Orchard's workshop is closed forever.",
+    "icon": "🚪"
+   },
+   "narration": "Advertising without retail distribution is setting money on fire. You spent your vital working capital on vanity awareness rather than securing wholesale purchase orders. The venture died before fulfilling its first commercial delivery.",
+   "ending": {
+    "kind": "lose",
+    "title": "Burned Out on Premature Marketing",
+    "summary": "You spent critical seed capital on billboards before establishing retail channels and product distribution.",
+    "reason": "Distribution channels must precede broadcast marketing. An ad for a product nobody can buy is pure waste.",
+    "lesson": "Lock in your buyer before spending money on the megaphone."
+   }
+  },
+  "s010": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "Fifty Fully Assembled Units",
+   "arrival": {
+    "type": "contract",
+    "from": "terrell",
+    "subject": "Byte Shop Purchase Order #1042",
+    "body": "Paul Terrell studies the clean television display and types a few lines of code. He nods with approval, pulls out a carbon-copy purchase order pad, and writes: fifty fully assembled Orchard I computers at five hundred dollars wholesale each. Total order value: twenty-five thousand dollars.",
+    "icon": "📄"
+   },
+   "narration": "There is one critical condition: Terrell demands fully assembled, boxed computers—not bags of loose components. You need fifteen thousand dollars worth of microprocessors, circuit boards, and connectors to build fifty machines. But your checking account has two hundred dollars. Wholesale component vendors demand payment on delivery. Suppliers are tough, veteran traders in Silicon Valley. But a purchase order signed by Terrell carries real commercial weight.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Show Terrell's purchase order to parts distributors for 30-day trade credit.",
+     "next": "s013"
+    },
+    {
+     "id": "b",
+     "text": "Take a loan shark's offer of high-interest street cash to pay suppliers.",
+     "next": "s011"
+    }
+   ]
+  },
+  "s011": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "Predatory Terms",
+   "arrival": {
+    "type": "visitor",
+    "from": "Collector",
+    "subject": "Compounding Weekly Interest Due",
+    "body": "A heavy-set collector in a sharp leather coat steps into the garage. He counts your finished motherboards and demands twenty percent compounding weekly interest on the component cash loan.",
+    "icon": "🚪"
+   },
+   "narration": "Parts arrived, but hand-soldering fifty motherboards took seven days longer than anticipated. By the time Terrell wrote his payment check, the compounding interest on the street loan had ballooned past twenty-eight thousand dollars. Every single dollar from your first major retail victory was seized.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Attempt to hide future cash receipts in an unlisted bank account.",
+     "next": "s012"
+    },
+    {
+     "id": "b",
+     "text": "Negotiate with legitimate commercial suppliers using verified purchase orders.",
+     "next": "s013"
+    }
+   ]
+  },
+  "s012": {
+   "chapter": "Chapter 1 – The Garage",
+   "title": "Ensnared by Debt",
+   "arrival": {
+    "type": "visitor",
+    "from": "Debt Enforcement",
+    "subject": "Foreclosure and Seizure of Prototypes",
+    "body": "Lenders seize your tools, circuit designs, and prototypes to satisfy unpaid compounding debt. Wes packs his multimeter into his car in tears, ending the partnership.",
+    "icon": "🚨"
+   },
+   "narration": "Panic drove you into toxic financing. Instead of using customer purchase orders to secure clean thirty-day commercial trade credit, you borrowed predatory capital that crushed the business before it could walk.",
+   "ending": {
+    "kind": "lose",
+    "title": "Destroyed by Toxic Financing",
+    "summary": "Compounding predatory debt consumed all revenue from your first retail order, forcing total asset seizure.",
+    "reason": "Never use high-interest short-term debt to finance manufacturing inventory. Legitimate commercial trade credit and customer purchase orders are the proper tools.",
+    "lesson": "Legitimate commercial credit protects your company from sharks."
+   }
+  },
+  "s013": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "Cash Cleared",
+   "arrival": {
+    "type": "phone_call",
+    "from": "terrell",
+    "subject": "Check #2041 Ready for Pickup",
+    "body": "Paul Terrell's voice echoes warmly over the receiver: 'Sam, every single one of the fifty computers passed testing. Customers bought thirty units before lunchtime. Come pick up your twenty-five thousand dollar cashier's check.'",
+    "icon": "📞"
+   },
+   "narration": "You and Wes stand beside your workbench staring at the cashier's check. After paying off the electronic parts distributor, Orchard holds eight thousand dollars in pure, unencumbered profit. Wes wants to buy two matching imported sports cars to celebrate. But you know that the Orchard I was merely an opening demonstration. The true commercial breakthrough is a consumer appliance: the Orchard II. Wes counts the hundred-dollar bills twice with trembling hands. You remind him that Orchard is building for the next thirty years.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Reinvest all profits into industrial tooling and molds for the Orchard II.",
+     "next": "s016"
+    },
+    {
+     "id": "b",
+     "text": "Distribute generous executive bonuses and lease matching sports cars.",
+     "next": "s014"
+    }
+   ]
+  },
+  "s014": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "Premature Victory",
+   "arrival": {
+    "type": "memo",
+    "from": "Bookkeeper",
+    "subject": "Account Balance Depletion",
+    "body": "Your sports car leases, celebratory parties, and downtown dinners cost seven thousand two hundred dollars over eight weeks. Orchard's operational bank account now holds eight hundred dollars.",
+    "icon": "📝"
+   },
+   "narration": "While you were cruising around the valley in foreign convertibles, hungry competitors reverse-engineered your bus schematics and announced rival computers with built-in color graphics. You have shiny vehicles parked in the driveway, but zero capital to purchase components for your next production run.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Keep driving the sports cars and try to sell more old Orchard I boards.",
+     "next": "s015"
+    },
+    {
+     "id": "b",
+     "text": "Cancel the car leases, ride city buses, and channel every dollar into Orchard II.",
+     "next": "s016"
+    }
+   ]
+  },
+  "s015": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "The One-Hit Wonder",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Byte Magazine",
+    "subject": "Silicon Valley Roundup: The Pioneers Who Faded",
+    "body": "An industry overview highlights rapid product cycles in personal computing. The article notes that Orchard Computers failed to follow up on its initial garage momentum.",
+    "icon": "📰"
+   },
+   "narration": "You celebrated before you constructed a sustainable business. Hardware companies require relentless reinvestment into subsequent product generations. By the time you attempted to fund new research, the computing market had moved far beyond raw boards.",
+   "ending": {
+    "kind": "lose",
+    "title": "Choked on Early Success",
+    "summary": "Draining profits on personal luxuries left the company unable to fund research and development for the Orchard II.",
+    "reason": "Early cash flow belongs to your next product cycle, not personal luxury. Startups that extract dividends prematurely starve their own growth.",
+    "lesson": "Winning your first battle is not winning the war."
+   }
+  },
+  "s016": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "The Plastic Case",
+   "arrival": {
+    "type": "memo",
+    "from": "wes",
+    "subject": "Enclosure Manufacturing Options",
+    "body": "Wes throws his pencil onto the desk: 'Bent sheet-metal boxes cost five dollars each from a local machine shop! Injection-molded plastic tooling requires fifteen thousand dollars upfront! Why do you care if the internal screws are visible?'",
+    "icon": "📝"
+   },
+   "narration": "Every computer in 1977 resembles industrial laboratory equipment: gray metal chassis, sharp corners, exposed ribbon cables, and roaring fans. You envision an approachable, warm beige plastic enclosure with an integrated keyboard, silent convection cooling, and clean sculpted lines that looks at home in an elementary classroom or a family den. You want a machine that feels like an elegant modern typewriter. It must invite people to touch the keys and create.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Insist on custom injection-molded plastic and silent convection cooling.",
+     "next": "s019"
+    },
+    {
+     "id": "b",
+     "text": "Compromise with a cheap bent-sheet-metal box to save tooling capital.",
+     "next": "s017"
+    }
+   ]
+  },
+  "s017": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "Trapped in the Hobby Corner",
+   "arrival": {
+    "type": "report",
+    "from": "Retail Merchandising Audit",
+    "subject": "Department Stores Reject Metal Enclosure",
+    "body": "Major retail buyers decline to stock the Orchard II. Sears buyer comments: 'This sheet metal chassis looks like an industrial voltage meter. No consumer will put this on their kitchen desk.'",
+    "icon": "📋"
+   },
+   "narration": "By skimping on industrial design, you confined Orchard to the narrow enthusiast hobbyist niche. Sales stagnated at three hundred units. Mainstream families strolled past your noisy metal box without a second glance.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Double down on selling exclusively to electronics hobbyist conventions.",
+     "next": "s018"
+    },
+    {
+     "id": "b",
+     "text": "Scrap the sheet metal, hire an industrial designer, and mold the plastic case.",
+     "next": "s019"
+    }
+   ]
+  },
+  "s018": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "The Hobbyist Trap",
+   "arrival": {
+    "type": "newspaper",
+    "from": "San Jose Mercury",
+    "subject": "Commodore and Tandy Dominate Consumer Computing",
+    "body": "Rival builders unveil polished consumer appliances with integrated plastic enclosures, capturing eighty-five percent of household and education sales.",
+    "icon": "📰"
+   },
+   "narration": "Design is not merely cosmetic decoration; design defines how an object enters people's daily lives. By refusing to invest in consumer-grade industrial packaging, you abandoned the mass market to competitors who understood that computers were for everyone.",
+   "ending": {
+    "kind": "lose",
+    "title": "Trapped in the Enthusiast Niche",
+    "summary": "Failing to invest in consumer industrial design kept your computer confined to an unprofitable hobbyist market.",
+    "reason": "Mainstream consumers purchase friendly, finished experiences, not raw technical specifications. Industrial design creates market leadership.",
+    "lesson": "Make it beautiful, or stay in the basement."
+   }
+  },
+  "s019": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "Mrs. Dalton Enters",
+   "arrival": {
+    "type": "visitor",
+    "from": "dalton",
+    "subject": "Series A Investment Proposal",
+    "body": "A polished black sedan pulls up to the curb. Mrs. Dalton, a respected former semiconductor marketing executive and venture partner, steps into your dusty garage. She examines the plastic Orchard II model, running her finger over its smooth beveled corners.",
+    "icon": "💼"
+   },
+   "narration": "Mrs. Dalton sets a formal proposal on your workbench: two hundred and fifty thousand dollars in equity capital, a guaranteed commercial credit facility at Bank of America, and her active mentorship on company governance, in exchange for twenty-five percent of Orchard Computers. Mrs. Dalton built her reputation on sharp operational discipline. Her backing gives Orchard instant credibility with national suppliers.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Accept Mrs. Dalton's investment and welcome her board governance.",
+     "next": "s022"
+    },
+    {
+     "id": "b",
+     "text": "Reject outside venture capital and try to self-fund using personal debt.",
+     "next": "s020"
+    }
+   ]
+  },
+  "s020": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "The Credit Squeeze",
+   "arrival": {
+    "type": "report",
+    "from": "Bank of America",
+    "subject": "Commercial Credit Request Denied",
+    "body": "The commercial loan committee rejects your borrowing request: 'Applicants possess no verifiable corporate credit rating, insufficient hard collateral, and zero executive governance experience.'",
+    "icon": "📋"
+   },
+   "narration": "Tooling manufacturers demand four hundred thousand dollars in advance payments for mass-production plastic molds. You maxed out your credit limits and borrowed from family members, but you remain three hundred thousand dollars short of minimum factory commitments.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Attempt to hand-assemble one machine at a time from credit card limits.",
+     "next": "s021"
+    },
+    {
+     "id": "b",
+     "text": "Call Mrs. Dalton back and accept her venture partnership.",
+     "next": "s022"
+    }
+   ]
+  },
+  "s021": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "Starved of Capital",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Wall Street Journal",
+    "subject": "Well-Funded PC Competitors Flood Retail Channels",
+    "body": "Venture-backed rivals establish modern automated assembly plants, while Orchard Computers remains stalled in a residential garage.",
+    "icon": "📰"
+   },
+   "narration": "Hardware manufacturing involves demanding working-capital cycles. Your refusal to partner with an experienced venture investor left Orchard starved of the scale capital required to compete in a rapidly professionalizing industry.",
+   "ending": {
+    "kind": "lose",
+    "title": "Strangled by Undercapitalization",
+    "summary": "Refusing venture capital left Orchard unable to finance factory tooling and component inventory at scale.",
+    "reason": "Ownership of a non-viable company is worth zero. Constructive venture capital provides essential supply chain credibility, banking lines, and strategic governance.",
+    "lesson": "Dilution for fuel is better than starvation with full control."
+   }
+  },
+  "s022": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "The Hum in the Circuit",
+   "arrival": {
+    "type": "memo",
+    "from": "wes",
+    "subject": "Power Supply Transformer Coil Noise",
+    "body": "The initial run of five hundred Orchard II computers is packaged and stacked in your warehouse for the crucial Christmas shopping season. But Wes discovers that eighteen percent of units emit a high-pitched buzzing coil whine under heavy processing load.",
+    "icon": "📝"
+   },
+   "narration": "Shipping immediately will book five hundred thousand dollars in fourth-quarter revenue and thrill department stores. Re-engineering the transformer requires stopping the assembly line, sourcing custom magnetic ferrite cores, and delaying shipments by three weeks into mid-January. Retail buyers are calling your office hourly. Wes works through the night with a cup of black coffee. True engineering craftsmanship means fixing flaws before customers ever see them.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Delay shipments three weeks to redesign and silence the transformer.",
+     "next": "s025"
+    },
+    {
+     "id": "b",
+     "text": "Ship the buzzing units immediately to capture holiday revenue.",
+     "next": "s023"
+    }
+   ]
+  },
+  "s023": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "The Recall Nightmare",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Consumer Technology Review",
+    "subject": "Orchard II Marred by Intolerable Power Supply Noise",
+    "body": "A prominent national review brands the Orchard II 'an innovative machine ruined by an unbearable acoustic whine.' Retail partners return thirty-five percent of inventory for full refunds.",
+    "icon": "📰"
+   },
+   "narration": "The holiday checks cleared, but the warranty liabilities quickly drained your treasury. Worse, school districts and corporate offices canceled their pending bids. The Orchard brand was publicly labeled as amateurish and unreliable.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Blame end users for operating machines in quiet office environments.",
+     "next": "s024"
+    },
+    {
+     "id": "b",
+     "text": "Issue a worldwide voluntary recall and replace all transformers for free.",
+     "next": "s025"
+    }
+   ]
+  },
+  "s024": {
+   "chapter": "Chapter 2 – First Hit & Growth",
+   "title": "Reputation Torched",
+   "arrival": {
+    "type": "report",
+    "from": "Customer Relations",
+    "subject": "Return Volume Exceeds Liquid Cash",
+    "body": "Dealer returns flood your warehouse. Bank of America freezes your commercial credit facility pending resolution of disputed customer refunds.",
+    "icon": "📋"
+   },
+   "narration": "You traded long-term brand integrity for short-term holiday cash. In consumer electronics, a reputation for poor quality is extraordinarily difficult to overcome once established.",
+   "ending": {
+    "kind": "lose",
+    "title": "Brand Destroyed by Shoddy Quality Control",
+    "summary": "Shipping known defective hardware destroyed retailer confidence and triggered catastrophic product returns.",
+    "reason": "Never ship known defects to satisfy an arbitrary calendar deadline. The financial cost of a recall always exceeds the cost of a delay.",
+    "lesson": "Your reputation leaves the building with every box."
+   }
+  },
+  "s025": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Rocket Ship",
+   "arrival": {
+    "type": "chart",
+    "from": "dalton",
+    "subject": "Orchard Annual Sales Trajectory",
+    "body": "Orchard II demand surges across the globe. Schools, families, and businesses purchase every unit that rolls off the line. Annual revenue climbs past one hundred million dollars.",
+    "icon": "📈"
+   },
+   "exhibits": [
+    {
+     "type": "bar_chart",
+     "title": "Orchard Annual Revenue Growth ($ Millions)",
+     "data": [
+      {
+       "label": "1977",
+       "value": 1
+      },
+      {
+       "label": "1978",
+       "value": 7.8
+      },
+      {
+       "label": "1979",
+       "value": 47.9
+      },
+      {
+       "label": "1980",
+       "value": 117.1
+      }
+     ]
+    }
+   ],
+   "narration": "Orchard Computers is now the undisputed leader of the microcomputer boom. You relocate from the garage into a modern Cupertino campus with fountains and glass atriums. But rapid expansion introduces difficult choices: discount chain stores want to sell Orchard machines at cut-rate prices, while high-touch specialty dealers warn that discounting will destroy their service margins. Trucks back up to the loading dock every twenty minutes. The Orchard II has become a cultural icon across American classrooms.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Protect authorized dealers with trained staff and strict price floors.",
+     "next": "s028"
+    },
+    {
+     "id": "b",
+     "text": "Dump inventory into discount box retailers to flood the market.",
+     "next": "s026"
+    }
+   ]
+  },
+  "s026": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Dealer Revolt",
+   "arrival": {
+    "type": "memo",
+    "from": "Independent Computer Dealers",
+    "subject": "Cancellation of Orchard Dealer Agreements",
+    "body": "Specialty computer retailers across forty states drop the Orchard line: 'Why should our sales staff spend an hour educating first-time buyers when discount grocery chains sell the box ten dollars above wholesale?'",
+    "icon": "📝"
+   },
+   "narration": "Discount retailers moved boxes, but they offered zero customer setup, zero training, and zero software support. When confused buyers could not load software, they returned machines in droves. The loyal specialty dealers who had built your market reputation refused to carry Orchard products ever again.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Continue relying on discount supermarket aisles for distribution.",
+     "next": "s027"
+    },
+    {
+     "id": "b",
+     "text": "Cancel discount contracts and re-establish authorized dealer protections.",
+     "next": "s028"
+    }
+   ]
+  },
+  "s027": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "Commodity Wasteland",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Computer Reseller Weekly",
+    "subject": "Orchard Margins Collapse in Bargain Bin Price War",
+    "body": "Supermarket price competition drives Orchard margins to under four percent. Cheap clone makers undercut Orchard by forty dollars, causing sales to collapse.",
+    "icon": "📰"
+   },
+   "narration": "By gutting dealer margins and customer support, you transformed a premium technology pioneer into a generic commodity. When cheaper clone makers arrived, you had no customer loyalty left to defend your pricing.",
+   "ending": {
+    "kind": "lose",
+    "title": "Commoditized by Wholesale Price Wars",
+    "summary": "Alienating premium service dealers in favor of bargain-bin discounters destroyed your pricing power and brand value.",
+    "reason": "Complex consumer products require educational retail support. If retailers cannot make a healthy profit selling your product, they will abandon you for alternatives.",
+    "lesson": "Protect the channel that teaches your customers."
+   }
+  },
+  "s028": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Giant Knocks",
+   "arrival": {
+    "type": "visitor",
+    "from": "brody",
+    "subject": "Titan Systems Buyout Proposal",
+    "body": "Marcus Brody, Senior Vice President of mainframe colossus Titan Systems, arrives in your Cupertino executive suite with five corporate attorneys. Titan offers forty-five million dollars cash to purchase Orchard Computers outright.",
+    "icon": "🏢"
+   },
+   "exhibits": [
+    {
+     "type": "table",
+     "title": "Titan Buyout vs. Independent Valuation",
+     "columns": [
+      "Scenario",
+      "Cash to Founders",
+      "Orchard Autonomy",
+      "Long-term Value Potential"
+     ],
+     "rows": [
+      [
+       "Titan Acquisition",
+       "$45M Cash",
+       "Absorbed into Titan Mainframe Division",
+       "Capped at $45M"
+      ],
+      [
+       "Stay Independent",
+       "Equity Retained",
+       "100% Autonomous Product Leadership",
+       "$1B+ Market Cap Target"
+      ]
+     ]
+    }
+   ],
+   "narration": "Brody leans back and smiles smoothly: 'Personal computing is a charming hobby, Sam. But Titan understands business. Take the forty-five million, let our enterprise division handle commercial sales, and you can retire in luxury.' Wes looks tempted. Mrs. Dalton remains quiet, watching for your reaction. Brody's smile does not reach his calculating eyes. Titan wants to neutralize your company before your machines conquer corporate desks.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Politely decline Titan's buyout and keep Orchard completely independent.",
+     "next": "s031"
+    },
+    {
+     "id": "b",
+     "text": "Accept Titan's forty-five million dollar buyout and cash out now.",
+     "next": "s029"
+    }
+   ]
+  },
+  "s029": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "Inside the Titan Machine",
+   "arrival": {
+    "type": "memo",
+    "from": "brody",
+    "subject": "Reorganization Directive #410",
+    "body": "Three weeks after acquisition, Titan headquarters reclassifies the Orchard II as 'Sub-terminal Model 4B'. They cancel all graphics work to protect mainframe terminals.",
+    "icon": "📝"
+   },
+   "narration": "You have a corner office in Titan's New York headquarters. But you need twelve committee signatures just to change a key color. Titan bought Orchard to neutralize an upstart threat to mainframe leases.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Submit to Titan corporate directives and collect your salary.",
+     "next": "s030"
+    },
+    {
+     "id": "b",
+     "text": "Resign your Titan position, forfeit the buyout vesting, and rebuild Orchard.",
+     "next": "s031"
+    }
+   ]
+  },
+  "s030": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "Shelved by the Monolith",
+   "arrival": {
+    "type": "newspaper",
+    "from": "BusinessWeek",
+    "subject": "Titan Shuts Down Orchard Personal Computer Line",
+    "body": "Titan Systems quietly discontinues all personal computing products, redirecting all staff into maintenance contracts for corporate mainframes.",
+    "icon": "📰"
+   },
+   "narration": "You sold your startup to an incumbent whose core business model was threatened by your invention. Titan buried your technology in a drawer to protect their legacy cash cows.",
+   "ending": {
+    "kind": "lose",
+    "title": "Smothered by Corporate Buyout",
+    "summary": "Selling to a legacy incumbent led to your groundbreaking product being shelved to protect mainframe revenues.",
+    "reason": "Legacy giants rarely acquire disruptive innovators to grow them. They acquire them to neutralize the competitive threat to their existing monopoly.",
+    "lesson": "Never sell your future to the dinosaur you came to replace."
+   }
+  },
+  "s031": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Seasoned Executive",
+   "arrival": {
+    "type": "visitor",
+    "from": "crane",
+    "subject": "CEO Candidate Interview",
+    "body": "Victor Crane enters the executive suite. Former president of a major consumer soft-drink conglomerate, Crane wears tailored three-piece suits and projects smooth corporate authority. The board believes Orchard needs an experienced executive to prepare for a public stock offering.",
+    "icon": "👔"
+   },
+   "narration": "Mrs. Dalton and the directors want Victor Crane to run corporate operations, logistics, and retail distribution. But Crane has zero experience with microprocessors, software architecture, or graphic display technology. You must establish strict boundaries before his employment contract is finalized. Crane adjusts his French cuffs and speaks of market share percentages. You make sure the design keys stay firmly in your pocket.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Hire Crane for operations, but retain full executive control of product & design.",
+     "next": "s034"
+    },
+    {
+     "id": "b",
+     "text": "Hand Crane absolute operational and product authority to manage all decisions.",
+     "next": "s032"
+    }
+   ]
+  },
+  "s032": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Sugar Water Takeover",
+   "arrival": {
+    "type": "memo",
+    "from": "crane",
+    "subject": "Product Line Expansion Strategy",
+    "body": "Crane's first executive memo outlines sixteen new Orchard computer variants with beige cases, spreadsheet bundles, and names like Orchard Business Pro Executive Edition.",
+    "icon": "📝"
+   },
+   "narration": "Crane treats computers like packaged soda cans: change the label, raise the price, and sell it in bulk. Engineering budgets for graphical user interfaces are slashed in favor of corporate hospitality suites and television commercials.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Accept Crane's corporate direction and stay on the sidelines.",
+     "next": "s033"
+    },
+    {
+     "id": "b",
+     "text": "Confront Crane in the board meeting and reclaim design authority.",
+     "next": "s034"
+    }
+   ]
+  },
+  "s033": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Bureaucratic Quagmire",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Wall Street Journal",
+    "subject": "Orchard Computers Flounders Under Bloated Executive Line",
+    "body": "Orchard Computers releases sixteen confusing, identical beige computers that fail to excite consumers or compete with Titan.",
+    "icon": "📰"
+   },
+   "narration": "You abdicated product leadership to an executive who did not understand technology. Orchard's creative soul was replaced by corporate politics, and market leadership evaporated.",
+   "ending": {
+    "kind": "lose",
+    "title": "Submerged in Corporate Mediocrity",
+    "summary": "Surrendering product authority to a non-technical executive resulted in a bloated, uninspired product catalog.",
+    "reason": "In a technology company, product vision must sit at the helm. Delegating product strategy to marketing managers produces indistinguishable commodities.",
+    "lesson": "Never let someone who doesn't understand the product decide what it does."
+   }
+  },
+  "s034": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Xerox Window",
+   "arrival": {
+    "type": "visitor",
+    "from": "Xerox Research Labs",
+    "subject": "Palo Alto Research Demonstration",
+    "body": "Engineers at Xerox PARC demonstrate a secret prototype: a computer screen with overlapping visual windows, text on white paper background, and a rolling pointing device called a 'mouse'.",
+    "icon": "🚪"
+   },
+   "narration": "It is like a lightning bolt through your brain. While every other computer company is stuck in command-line prompts and green text terminals, you see that all computers in the future will work this way. Xerox corporate management has no idea what they have; they think it is an expensive photocopier accessory. You hold the plastic mouse in your palm. Moving your hand moves the pointer on screen. It feels as natural as breathing.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Form Project Aurora to license the patents and build the consumer GUI.",
+     "next": "s034b"
+    },
+    {
+     "id": "b",
+     "text": "Dismiss the mouse as an expensive toy and stick to command line terminals.",
+     "next": "s035"
+    }
+   ]
+  },
+  "s034b": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "The Single-Button Mouse",
+   "arrival": {
+    "type": "memo",
+    "from": "elena",
+    "subject": "Mouse Ergonomics Prototype Review",
+    "body": "Elena Vance brings three experimental mouse mockups into your office. Xerox built a fragile three-button mouse requiring ball bearings that costs three hundred dollars to produce. You challenge Elena and Wes to invent a durable single-button optical mouse for fifteen dollars.",
+    "icon": "📝"
+   },
+   "narration": "Conservative engineers object that one button is too simple. They insist that users need three buttons, modifier keys, and complex chord shortcuts. But you understand human psychology: ordinary people will get confused by multi-button mice. If computing is going to reach the entire world, every action must be intuitive, inviting, and simple. You drop the wooden mouse prototype into your pocket. If the user interface feels natural, the software becomes invisible.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Insist on the intuitive single-button design and consumer simplicity.",
+     "next": "s037"
+    },
+    {
+     "id": "b",
+     "text": "Give in to the engineers and build a complex five-button mouse.",
+     "next": "s035"
+    }
+   ]
+  },
+  "s035": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "Clinging to the Command Line",
+   "arrival": {
+    "type": "report",
+    "from": "Competitive Intelligence",
+    "subject": "Titan Systems Launches Graphical Workstation",
+    "body": "Titan Systems licenses the Xerox graphical research and launches a graphical business computer. Orchard II text sales drop thirty-five percent overnight.",
+    "icon": "📋"
+   },
+   "narration": "You saw the future with your own eyes and turned away because the old way was comfortable. Your competitors did not hesitate. When you cling to yesterday's technology, you invite tomorrow's obsolescence.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Insist that real programmers only like green command prompts.",
+     "next": "s036"
+    },
+    {
+     "id": "b",
+     "text": "Urgently launch Project Aurora to leapfrog Titan in graphics.",
+     "next": "s037"
+    }
+   ]
+  },
+  "s036": {
+   "chapter": "Chapter 3 – Going Big",
+   "title": "Replaced by Progress",
+   "arrival": {
+    "type": "newspaper",
+    "from": "InfoWorld",
+    "subject": "The Graphical Revolution Leaves Orchard Behind",
+    "body": "Reviewers declare Orchard Computers a legacy museum piece as modern graphical operating systems capture eighty percent of all software development.",
+    "icon": "📰"
+   },
+   "narration": "Technology moves forward without sentiment. By ignoring the shift from command lines to intuitive graphical interfaces, you allowed your company to be bypassed by history.",
+   "ending": {
+    "kind": "lose",
+    "title": "Blinded to the Graphical Revolution",
+    "summary": "Refusing to adopt graphical user interfaces and mice relegated Orchard to an obsolete command-line past.",
+    "reason": "When paradigm shifts occur in user interaction, incumbents must cannibalize their existing interface before competitors do it for them.",
+    "lesson": "When you see the future, run toward it."
+   }
+  },
+  "s037": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Pirate Flag",
+   "arrival": {
+    "type": "visitor",
+    "from": "elena",
+    "subject": "Project Aurora Industrial Design",
+    "body": "Elena Vance unrolls the engineering schematics for Project Aurora in your private laboratory. Above the door, your team flies a black pirate flag. Aurora has bitmapped graphics, proportional fonts, audio synthesis, and a single-button optical mouse.",
+    "icon": "🎨"
+   },
+   "narration": "Victor Crane and the Orchard board are furious that you are spending fifty million dollars developing Aurora while Orchard II still generates ninety percent of company profit. Crane demands that Aurora be priced at three thousand five hundred dollars with corporate networking cards. You want it priced at nineteen hundred dollars for students, artists, and families. The pirate flag flutters in the warm California breeze. Your team works eighteen hours a day because they are changing the world.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Hold the line on accessible $1,995 pricing and artistic focus.",
+     "next": "s040"
+    },
+    {
+     "id": "b",
+     "text": "Yield to Crane's demands and load Aurora up to $3,500 for enterprise.",
+     "next": "s038"
+    }
+   ]
+  },
+  "s038": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Executive Price Tag",
+   "arrival": {
+    "type": "report",
+    "from": "Retail Sales Tracker",
+    "subject": "Aurora Launch Sales Disappoint",
+    "body": "Priced at three thousand five hundred dollars, Aurora sales hit a brick wall. Students and creators cannot afford it; enterprise corporations stick with Titan mainframe terminals.",
+    "icon": "📋"
+   },
+   "narration": "A product aimed at everyone at a compromise price pleases no one. Aurora was too expensive for consumers and lacked the database software that corporate purchasing departments required.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Blame the customers for not appreciating high technology.",
+     "next": "s039"
+    },
+    {
+     "id": "b",
+     "text": "Re-position Aurora with dedicated desktop publishing software.",
+     "next": "s040"
+    }
+   ]
+  },
+  "s039": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Expensive Paperweight",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Silicon Valley Journal",
+    "subject": "Aurora Stalls in Warehouses Across Nation",
+    "body": "Orchard Computers takes a sixty-million dollar inventory writedown as thousands of unsold Aurora units sit in storage.",
+    "icon": "📰"
+   },
+   "narration": "Pricing without understanding your target customer's budget is fatal. By letting corporate compromise inflate the retail price, you strangled a revolutionary invention in the crib.",
+   "ending": {
+    "kind": "lose",
+    "title": "Strangled by Compromise Pricing",
+    "summary": "Inflating Aurora's price to satisfy corporate margin targets priced the computer out of its natural consumer and creative market.",
+    "reason": "A revolutionary consumer platform must reach volume adoption to attract third-party software developers. Premium pricing without an established ecosystem fails.",
+    "lesson": "Price for your customer, not your executive bonus structure."
+   }
+  },
+  "s040": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Executive Suite War",
+   "arrival": {
+    "type": "memo",
+    "from": "crane",
+    "subject": "Board Agenda – Management Reorganization",
+    "body": "Victor Crane schedules an emergency board meeting. His agenda item is blunt: remove Sam Hollis from all operational leadership and strip him of the Aurora division.",
+    "icon": "📝"
+   },
+   "narration": "The board is divided. Mrs. Dalton urges caution, but the outside institutional directors are terrified by slowing Orchard II revenues and your aggressive management style. You have twenty-four hours before the vote to decide how to respond to Crane's palace coup. The executive suite smells of polished mahogany and expensive cigars. You stand before the directors and speak with fiery clarity.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Confront the board with dignity, articulate your vision, and force a vote.",
+     "next": "s043"
+    },
+    {
+     "id": "b",
+     "text": "Leak board gossip to the press to wage a smear campaign against Crane.",
+     "next": "s041"
+    }
+   ]
+  },
+  "s041": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Leaks Backfire",
+   "arrival": {
+    "type": "newspaper",
+    "from": "San Francisco Chronicle",
+    "subject": "Civil War at Orchard: Confidential Board Memos Leaked",
+    "body": "Sensational headlines detail screaming matches in executive suites. Orchard stock drops twelve percent in heavy trading as institutional investors flee.",
+    "icon": "📰"
+   },
+   "narration": "Your media leaks made the board look incompetent and sent the stock into a freefall. The directors, furious at the public humiliation, united unanimously behind Crane.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Continue leaking more confidential memos to tabloids.",
+     "next": "s042"
+    },
+    {
+     "id": "b",
+     "text": "Apologize to the board and face the vote directly.",
+     "next": "s043"
+    }
+   ]
+  },
+  "s042": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "Fired in Disgrace",
+   "arrival": {
+    "type": "contract",
+    "from": "Orchard Legal Council",
+    "subject": "Immediate Termination for Cause",
+    "body": "The board terminates your employment for gross breach of fiduciary duty and leaks of trade secrets. Company security escorts you off campus.",
+    "icon": "📄"
+   },
+   "narration": "Waging a tabloid war against your own company destroyed your credibility as a corporate leader. The board had legal grounds to fire you without severance or stock standing.",
+   "ending": {
+    "kind": "lose",
+    "title": "Ousted for Gross Misconduct",
+    "summary": "Leaking internal company disputes to the press unified the board against you and caused termination for cause.",
+    "reason": "Never sabotage the company to win a board dispute. When you trash your own ship to spite the captain, you drown with the crew.",
+    "lesson": "Fight for your vision with integrity, not backchannel gossip."
+   }
+  },
+  "s043": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "Fired from Your Own Company",
+   "arrival": {
+    "type": "memo",
+    "from": "Orchard Board of Directors",
+    "subject": "Resolution 85-12 Adopted",
+    "body": "The tally is final: five votes to four. Victor Crane wins the board's confidence. You are relieved of all operational duties at Orchard Computers. Your office keycard is deactivated.",
+    "icon": "📝"
+   },
+   "narration": "You walk across the empty parking lot where your car was once parked in the founder's slot. Ten years after building the first machine in your parents' garage, you have been evicted from the company that bears your name. You are thirty years old, possessing fifty million dollars of stock and a broken heart. What do you do now? You pack your personal notebook and walk through the glass lobby doors. The pain is searing, but the fire inside you only burns hotter.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Start a brand-new computing venture from scratch: Lantern Labs.",
+     "next": "s050"
+    },
+    {
+     "id": "b",
+     "text": "Take an executive vice-president role at rival Titan Systems.",
+     "next": "s044"
+    },
+    {
+     "id": "c",
+     "text": "Sell all stock, take the money, and retire permanently to a beach.",
+     "next": "s046"
+    },
+    {
+     "id": "d",
+     "text": "File an angry, destructive lawsuit against Orchard to tie them up in court.",
+     "next": "s048"
+    }
+   ]
+  },
+  "s044": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "Titan's Trophy",
+   "arrival": {
+    "type": "contract",
+    "from": "brody",
+    "subject": "Titan Systems Employment Agreement",
+    "body": "Marcus Brody hands you an office in Armonk, New York. Title: Special Advisor to the Chairman. Salary: two million dollars a year. Autonomy: zero.",
+    "icon": "📄"
+   },
+   "narration": "You joined the rival giant to spite Orchard, but Titan never intended to let you build anything disruptive. They put you on display in executive meetings like a captured battle trophy while their committees buried your new operating system ideas.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Stay at Titan and enjoy the high executive pension.",
+     "next": "s045"
+    },
+    {
+     "id": "b",
+     "text": "Walk out of Titan, forfeit the pension, and start Lantern Labs.",
+     "next": "s050"
+    }
+   ]
+  },
+  "s045": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Gilded Cage",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Fortune Magazine",
+    "subject": "Where Are They Now? Tech Pioneers in Corporate Retirement",
+    "body": "An article profiles tech founders who traded creative ambition for corporate retainer titles, noting that Sam Hollis has not shipped a product in seven years.",
+    "icon": "📰"
+   },
+   "narration": "You traded your creative fire for a comfortable corporate salary. Working for the legacy giant extinguished your vision, leaving your life's work behind you.",
+   "ending": {
+    "kind": "lose",
+    "title": "Neutralized as an Executive Trophy",
+    "summary": "Joining your former rival trapped you in corporate bureaucracy where your ideas were intentionally silenced.",
+    "reason": "Never work for a rival out of anger. If your calling is to build the future, no corporate salary can replace the autonomy of a founder.",
+    "lesson": "A gilded cage is still a cage."
+   }
+  },
+  "s046": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Island Retirement",
+   "arrival": {
+    "type": "visitor",
+    "from": "Resort Concierge",
+    "subject": "Morning Mai Tai Service",
+    "body": "The Caribbean waves lap against the white sand in front of your beachfront villa. A waiter sets down an umbrella drink. The temperature is eighty degrees.",
+    "icon": "🚪"
+   },
+   "narration": "For six months, doing nothing feels like paradise. But by the second year, the silence is deafening. Every morning you open the paper and read about breakthroughs in software, graphics, and the internet. You have tens of millions in the bank, but your mind is wasting away in paradise.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Stay on the beach and order another tropical drink.",
+     "next": "s047"
+    },
+    {
+     "id": "b",
+     "text": "Book a flight back to California and start Lantern Labs.",
+     "next": "s050"
+    }
+   ]
+  },
+  "s047": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "Forgotten in Paradise",
+   "arrival": {
+    "type": "newspaper",
+    "from": "San Jose Mercury",
+    "subject": "Twenty-Year Retrospective on Silicon Valley",
+    "body": "A historical retrospective mentions Sam Hollis as a brief flash in the pan during the late seventies who walked away and was never heard from again.",
+    "icon": "📰"
+   },
+   "narration": "You let defeat define your life. Instead of dusting yourself off and building something even greater, you checked out of the game when you were only thirty years old.",
+   "ending": {
+    "kind": "lose",
+    "title": "Checked Out of the Arena",
+    "summary": "Retiring out of wounded pride left your potential unfulfilled and your career a footnote in tech history.",
+    "reason": "Failure is not fatal unless you quit. Great builders are defined not by whether they get knocked down, but by how they stand back up.",
+    "lesson": "The only real defeat is quitting."
+   }
+  },
+  "s048": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "The Courtroom Swamp",
+   "arrival": {
+    "type": "report",
+    "from": "Legal Billing",
+    "subject": "Monthly Retainer Billing: $420,000",
+    "body": "Your law firm submits a four-hundred-thousand dollar monthly invoice for depositions, discovery motions, and procedural hearings against Orchard Computers.",
+    "icon": "📋"
+   },
+   "narration": "For two years, your life revolves around courtrooms, document reviews, and bitter depositions. Orchard's deep legal reserves counter-sue you for trade secrets. The litigation drains thirty million dollars of your personal wealth without advancing your technology by a single line of code.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Spend your remaining money on supreme court appeals.",
+     "next": "s049"
+    },
+    {
+     "id": "b",
+     "text": "Settle the lawsuit, release all claims, and start Lantern Labs.",
+     "next": "s050"
+    }
+   ]
+  },
+  "s049": {
+   "chapter": "Chapter 4 – The Rift & The Crisis",
+   "title": "Bankrupted by Vengeance",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Legal Times",
+    "subject": "Hollis Claims Dismissed With Prejudice",
+    "body": "The federal judge dismisses your claims and assesses eight million dollars in opposing legal fees against you for vexatious litigation.",
+    "icon": "📰"
+   },
+   "narration": "Vengeance is the worst investment strategy in the world. While you were arguing with lawyers in windowless conference rooms, an entire revolution in networking and software passed you by.",
+   "ending": {
+    "kind": "lose",
+    "title": "Consumed by Vindictive Litigation",
+    "summary": "Wasting millions on bitter lawsuits against your former company destroyed your wealth and creative energy.",
+    "reason": "Lawsuits do not invent products. Energy spent on revenge is energy stolen from your next great creation.",
+    "lesson": "The best revenge is building something incredible."
+   }
+  },
+  "s050": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "Founding Lantern Labs",
+   "arrival": {
+    "type": "email",
+    "from": "wes",
+    "subject": "Count me in, Sam",
+    "body": "Wes leaves a short email message: 'I resigned from Orchard this morning. I heard you rented an empty brick warehouse in Palo Alto. See you tomorrow at eight.'",
+    "icon": "✉️"
+   },
+   "narration": "You have a clean sheet of paper, twenty million dollars of personal capital, and the best software architects in the world. You found Lantern Labs. Your goal is audacious: build the computer of the 1990s—a workstation with true multitasking, an object-oriented operating system, and built-in Ethernet networking. The brick walls of the Palo Alto warehouse echo with creative laughter. When you start fresh, you carry no legacy corporate baggage.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Design a modern object-oriented UNIX operating system: Lumina OS.",
+     "next": "s053"
+    },
+    {
+     "id": "b",
+     "text": "Build a cheap clone of the Orchard II to steal your old company's sales.",
+     "next": "s051"
+    }
+   ]
+  },
+  "s051": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Copycat Trap",
+   "arrival": {
+    "type": "contract",
+    "from": "Orchard Legal",
+    "subject": "Copyright Infringement Injunction",
+    "body": "Orchard's legal team wins an immediate preliminary injunction halting your clone motherboard for copying firmware ROM code.",
+    "icon": "📄"
+   },
+   "narration": "Building a copycat machine was uninspired. You tied your brilliant new team to backward-looking legal battles instead of creating the next wave of computing architecture.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Keep fighting the copyright injunction in court.",
+     "next": "s052"
+    },
+    {
+     "id": "b",
+     "text": "Scrap the clone hardware and focus on the revolutionary Lumina OS.",
+     "next": "s053"
+    }
+   ]
+  },
+  "s052": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "Drowned in Injunctions",
+   "arrival": {
+    "type": "newspaper",
+    "from": "San Jose Mercury",
+    "subject": "Lantern Labs Shut Down Over Patent Theft",
+    "body": "Federal marshals impound Lantern's clone inventory. The startup is liquidated before launching a single product.",
+    "icon": "📰"
+   },
+   "narration": "Cloning your past is not innovating for the future. You wasted Lantern's opportunity by attempting to copy what you had already built years earlier.",
+   "ending": {
+    "kind": "lose",
+    "title": "Strangled by Copycat Ambition",
+    "summary": "Attempting to clone Orchard's old hardware resulted in copyright injunctions and company shutdown.",
+    "reason": "Never spend your second act copying your first act. Innovation requires leaping to the next paradigm, not imitating the past.",
+    "lesson": "Skate to where the puck is going, not where it was."
+   }
+  },
+  "s053": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Object Architecture",
+   "arrival": {
+    "type": "memo",
+    "from": "wes",
+    "subject": "Lumina OS Microkernel Benchmark",
+    "body": "Wes demonstrates the microkernel architecture. It boots in eight seconds, compiles graphics in real-time, and allows developers to build graphical applications ten times faster than on DOS.",
+    "icon": "📝"
+   },
+   "narration": "Lumina OS is a work of art. But Lantern's hardware enclosure is spiraling out of control: a perfect one-foot matte black magnesium cube that requires custom ninety-degree die-cast molds. The hardware costs eight thousand dollars per unit to manufacture. Wes demonstrates live code compilation on the screen. Objects communicate cleanly across the bus. This software engine is ten years ahead of its time.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Strictly manage burn rate and keep software development front and center.",
+     "next": "s056"
+    },
+    {
+     "id": "b",
+     "text": "Compromise Lumina OS by retrofitting it onto clunky legacy DOS chips.",
+     "next": "s054"
+    }
+   ]
+  },
+  "s054": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "Compromised Architecture",
+   "arrival": {
+    "type": "report",
+    "from": "Software Architecture Review",
+    "subject": "Lumina Crashes Under DOS Limitations",
+    "body": "Retrofitting modern object-oriented software onto 16-bit DOS microchips introduces chronic memory fragmentation and frequent kernel panics.",
+    "icon": "📋"
+   },
+   "narration": "By crippling Lumina OS to fit legacy low-end hardware, you destroyed its speed, elegance, and reliability. Academic researchers and software creators refused to adopt the buggy hybrid.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Try to patch the broken hybrid code with more hotfixes.",
+     "next": "s055"
+    },
+    {
+     "id": "b",
+     "text": "Purge the DOS compromises and restore clean 32-bit architecture.",
+     "next": "s056"
+    }
+   ]
+  },
+  "s055": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "Software Quicksand",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Byte Magazine",
+    "subject": "Lumina OS Fails to Deliver on Revolutionary Promise",
+    "body": "A technical teardown laments that Lantern Labs crippled a brilliant operating system to run on obsolete hardware.",
+    "icon": "📰"
+   },
+   "narration": "Technical compromises compound over time. By forcing a modern microkernel onto legacy constraints, you delivered an unworkable mess.",
+   "ending": {
+    "kind": "lose",
+    "title": "Ruined by Technical Compromise",
+    "summary": "Crippling your modern operating system to support legacy hardware destroyed its core value proposition.",
+    "reason": "New software paradigms require clean architectural foundations. Compromising core architecture to suit legacy hardware destroys performance.",
+    "lesson": "Build on clean ground, not decaying foundations."
+   }
+  },
+  "s056": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Burn Rate Crisis",
+   "arrival": {
+    "type": "report",
+    "from": "Lantern Finance",
+    "subject": "Cash Runway Analysis – 5 Months Remaining",
+    "body": "Lantern Labs is burning three hundred thousand dollars a month on custom magnesium cube tooling, European executive desks, and gourmet cafeteria food. Cash runway is down to five months.",
+    "icon": "📋"
+   },
+   "exhibits": [
+    {
+     "type": "table",
+     "title": "Lantern Labs Monthly Burn Options",
+     "columns": [
+      "Option",
+      "Monthly Burn",
+      "Runway",
+      "Software Focus"
+     ],
+     "rows": [
+      [
+       "Current Spree",
+       "$320,000",
+       "4.8 Months",
+       "Hardware & Luxury Perks"
+      ],
+      [
+       "Discipline Cuts",
+       "$110,000",
+       "14.2 Months",
+       "100% Core Lumina OS"
+      ]
+     ]
+    }
+   ],
+   "narration": "Your perfectionism is outrunning your bank account. You want the magnesium cubes painted inside and out, custom bronze logo badges, and granite lobby staircases. Wes warns you that if you don't cut hardware burn immediately, Lantern will be bankrupt before Lumina OS Version 1.0 reaches universities. You draw a red line through the luxury catering invoices. When cash is preserved, brilliant engineers have time to finish great work.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Enforce deep cost cuts: freeze hardware extravagance and focus on Lumina OS.",
+     "next": "s059"
+    },
+    {
+     "id": "b",
+     "text": "Refuse to cut costs and keep spending cash on the custom magnesium cube.",
+     "next": "s057"
+    }
+   ]
+  },
+  "s057": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "Empty Pockets in Palo Alto",
+   "arrival": {
+    "type": "memo",
+    "from": "Payroll Service",
+    "subject": "Insufficient Funds for Payroll",
+    "body": "The bank returns Lantern's payroll check: 'Account balance zero.' Top engineers pack their personal belongings as power company issues a shutoff warning.",
+    "icon": "📝"
+   },
+   "narration": "You let aesthetic vanity consume your working capital. When payroll bounced, your world-class software team walked out the door to work for Microsoft and Sun Microsystems.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Try to beg loan sharks for emergency payroll bridge loans.",
+     "next": "s058"
+    },
+    {
+     "id": "b",
+     "text": "Sell off company hardware assets, slash perks, and refinance Lantern.",
+     "next": "s059"
+    }
+   ]
+  },
+  "s058": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Black Cube Flop",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Wall Street Journal",
+    "subject": "Lantern Labs Enters Receivership",
+    "body": "Lantern Labs liquidates its Palo Alto warehouse after burning through twenty-four million dollars without shipping software.",
+    "icon": "📰"
+   },
+   "narration": "Cash is oxygen. You spent your runway on vanity furniture and expensive manufacturing molds before proving customer adoption.",
+   "ending": {
+    "kind": "lose",
+    "title": "Suffocated by Unchecked Burn Rate",
+    "summary": "Excessive spending on vanity hardware manufacturing and luxury perks bankrupted Lantern Labs before software launch.",
+    "reason": "No matter how visionary your product, if you run out of cash before shipping, you fail. Cash discipline keeps the dream alive.",
+    "lesson": "Runway is reality. Guard your cash like your life depends on it."
+   }
+  },
+  "s059": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Prism Gamble",
+   "arrival": {
+    "type": "visitor",
+    "from": "Prism Animation Lab",
+    "subject": "Digital Graphics Partnership",
+    "body": "A small team of digital animators and computer graphics researchers named Prism Studio knocks on your door. They have developed revolutionary 3D rendering algorithms, but their parent film company wants to sell them off for five million dollars.",
+    "icon": "🎨"
+   },
+   "narration": "Everyone in Hollywood thinks computer animation is a cold, sterile toy that can never match hand-drawn cartoons. But you see the emotional power of digital storytelling. You invest personal capital to purchase Prism Studio and set them free to make the world's first full-length computer-animated feature film. The digital animators show you a short clip of a jumping desk lamp. The character has genuine heart and warmth. You know it will win.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Invest in Prism Studio and let the animators develop an original story.",
+     "next": "s060"
+    },
+    {
+     "id": "b",
+     "text": "Dismiss computer animation and pivot Lantern into a chain of retail hardware shops.",
+     "next": "s061"
+    }
+   ]
+  },
+  "s060": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Toy Phenomenon",
+   "arrival": {
+    "type": "news_alert",
+    "from": "Hollywood Reporter",
+    "subject": "Prism Animated Film Smashes Box Office Records",
+    "body": "Prism Studio's groundbreaking computer-animated film about talking toys opens at number one worldwide, grossing three hundred and sixty million dollars. Prism goes public, making your equity worth over one billion dollars.",
+    "icon": "🚨"
+   },
+   "narration": "The Prism gamble paid off beyond anyone's wildest dreams. You are now a billionaire in your own right, independent of Orchard Computers. Meanwhile, Lantern's Lumina OS has become the darling of top computer science universities and Wall Street financial modeling desks. Wall Street analysts scramble to upgrade their forecasts. But your heart remains anchored in operating systems and personal computers.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Keep Lantern focused on high-margin software while Orchard struggles.",
+     "next": "s063"
+    },
+    {
+     "id": "b",
+     "text": "Use Prism cash to build an expensive chain of brick-and-mortar Lantern stores.",
+     "next": "s061"
+    }
+   ]
+  },
+  "s061": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "Retail Overreach",
+   "arrival": {
+    "type": "report",
+    "from": "Commercial Real Estate",
+    "subject": "Mall Lease Penalties and Construction Overruns",
+    "body": "Lantern's thirty high-end retail mall stores sit empty. Lease penalties, security overhead, and staffing drain twelve million dollars per quarter.",
+    "icon": "📋"
+   },
+   "narration": "You attempted to build a national physical retail empire for an enterprise software workstation that was only purchased by university professors and defense researchers. The storefronts bled cash relentlessly.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Sign ten more retail mall leases hoping foot traffic increases.",
+     "next": "s062"
+    },
+    {
+     "id": "b",
+     "text": "Shut down the empty retail stores immediately and refocus on Lumina OS.",
+     "next": "s063"
+    }
+   ]
+  },
+  "s062": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Empty Storefronts",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Retail Week",
+    "subject": "Lantern Retail Experiment Collapses in Bankruptcy",
+    "body": "Mall operators seize Lantern's leased locations as unpaid rent obligations consume all available corporate cash.",
+    "icon": "📰"
+   },
+   "narration": "Opening retail stores for an enterprise software tool was a fatal mismatch of channel and product. The real estate leases drained the company dry.",
+   "ending": {
+    "kind": "lose",
+    "title": "Crushed by Premature Retail Expansion",
+    "summary": "Opening expensive physical retail stores for a specialized workstation drained company reserves and forced liquidation.",
+    "reason": "Distribution channels must align with customer buying behavior. Specialized software does not sell via suburban shopping mall foot traffic.",
+    "lesson": "Never build expensive stores until you have mass-market demand."
+   }
+  },
+  "s063": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "Orchard in Freefall",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Wall Street Journal",
+    "subject": "Orchard Computers Reports $740M Annual Loss",
+    "body": "After years of committee gridlock and failed operating system projects, Orchard Computers is ninety days from insolvency. CEO Victor Crane was ousted last month.",
+    "icon": "📰"
+   },
+   "narration": "The company you built in your parents' garage is dying. Orchard has tried and failed three times to write a modern operating system to replace the aging Orchard II codebase. Their market share has collapsed from twenty percent to under four percent. The new chairman of Orchard is desperate. You read the headlines with a heavy heart. The company you named after an apple orchard is gasping for breath under corporate debt.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Position Lantern's Lumina OS as the salvation for Orchard's future.",
+     "next": "s066"
+    },
+    {
+     "id": "b",
+     "text": "Beg Orchard for a minor advisory consulting contract.",
+     "next": "s064"
+    }
+   ]
+  },
+  "s064": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Beggar's Posture",
+   "arrival": {
+    "type": "memo",
+    "from": "Orchard Interim Management",
+    "subject": "Consulting Inquiry Dismissed",
+    "body": "Orchard's committee sends a cold, one-paragraph rejection: 'We have no interest in paying hourly consulting fees to former personnel.'",
+    "icon": "📝"
+   },
+   "narration": "You came to them with a weak, subservient posture instead of offering an indispensable strategic solution. They dismissed you as an irrelevant remnant of the past.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Accept the dismissal and abandon all interest in Orchard.",
+     "next": "s065"
+    },
+    {
+     "id": "b",
+     "text": "Prepare a commanding presentation demonstrating Lumina OS running on Orchard hardware.",
+     "next": "s066"
+    }
+   ]
+  },
+  "s065": {
+   "chapter": "Chapter 5 – The Wilderness Years",
+   "title": "The Sinking Ship Sinks",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Silicon Valley Daily",
+    "subject": "Orchard Computers Files for Chapter 11 Bankruptcy",
+    "body": "Orchard Computers is liquidated and its patents sold to foreign competitors at auction. The company that started the PC revolution ceases to exist.",
+    "icon": "📰"
+   },
+   "narration": "You hesitated when decisive strategic leadership was needed. Orchard collapsed because no one had the courage to bring a modern operating system to the table.",
+   "ending": {
+    "kind": "lose",
+    "title": "Allowed Orchard to Perish",
+    "summary": "Approaching Orchard with hesitation instead of a bold strategic solution allowed the company to collapse into bankruptcy.",
+    "reason": "When a turnaround opportunity arises, leaders must present a definitive, comprehensive solution, not hesitant requests for advisory roles.",
+    "lesson": "Lead with strength, or watch the opportunity vanish."
+   }
+  },
+  "s066": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "The Midnight Call",
+   "arrival": {
+    "type": "phone_call",
+    "from": "dalton",
+    "subject": "Orchard Board Chairman Inquires",
+    "body": "Mrs. Dalton calls you at 1:00 AM: 'Sam, the board is meeting tomorrow. They are deciding whether to license an operating system from an outside software house or buy Lantern Labs. Get over here.'",
+    "icon": "📞"
+   },
+   "narration": "You walk into the Orchard executive suite where you were fired eleven years ago. The current directors look haggard and terrified. On your laptop, you boot Lumina OS and demonstrate true memory protection, internet multitasking, and stunning 3D graphics. The directors are speechless. You step into the darkened auditorium with quiet authority. You plug in your black laptop and demonstrate the future of computing.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Propose that Orchard acquire Lantern Labs and use Lumina OS as its core engine.",
+     "next": "s069"
+    },
+    {
+     "id": "b",
+     "text": "Recommend that Orchard form a fifty-fifty joint venture with rival Titan Systems.",
+     "next": "s067"
+    }
+   ]
+  },
+  "s067": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "The Titan Trap",
+   "arrival": {
+    "type": "memo",
+    "from": "Titan Joint Venture Committee",
+    "subject": "Orchard-Titan Merger Discussions Stall",
+    "body": "Titan Systems insists on firing Orchard's remaining software engineers and replacing all operating systems with Titan's corporate server software.",
+    "icon": "📝"
+   },
+   "narration": "Partnering with your fiercest competitor gave Titan complete leverage over Orchard's dying breaths. Titan dragged out negotiations until Orchard's remaining bank reserves were exhausted.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Surrender all Orchard intellectual property to Titan.",
+     "next": "s068"
+    },
+    {
+     "id": "b",
+     "text": "Break off Titan talks, acquire Lantern Labs, and bring Sam back.",
+     "next": "s069"
+    }
+   ]
+  },
+  "s068": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "Swallowed Whole",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Bloomberg",
+    "subject": "Titan Systems Absorbs Orchard in Distressed Fire Sale",
+    "body": "Titan dismantles the Orchard campus, firing four thousand workers and absorbing the brand into its enterprise server division.",
+    "icon": "📰"
+   },
+   "narration": "Handing your wounded company to your greatest rival was suicide. Titan used the partnership to dismantle Orchard from the inside.",
+   "ending": {
+    "kind": "lose",
+    "title": "Eaten Alive by the Rival Giant",
+    "summary": "Recommending a joint venture with rival Titan Systems allowed them to cannibalize Orchard's remaining assets.",
+    "reason": "Competitors do not rescue each other. Entering a distressed partnership with your chief adversary invites your own liquidation.",
+    "lesson": "Never ask the wolf to guard the sheepfold."
+   }
+  },
+  "s069": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "The Acquisition Terms",
+   "arrival": {
+    "type": "contract",
+    "from": "Orchard Board",
+    "subject": "Acquisition Agreement for Lantern Labs",
+    "body": "Orchard agrees to purchase Lantern Labs for four hundred million dollars. The contract offers you two choices: four hundred million in cash, or three hundred million in Orchard stock plus appointment as Advisor to the Chairman.",
+    "icon": "📄"
+   },
+   "narration": "Cash guarantees you walk away wealthy today. Stock ties your personal destiny directly to the resurrection of Orchard Computers. If Orchard goes bankrupt, your stock is worthless. If you can turn Orchard around, it will be the greatest comeback in industrial history. You sign the acquisition agreement with your favorite black fountain pen. The prodigal founder is coming home to Cupertino.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Take Orchard stock, return to the campus, and lead the turnaround.",
+     "next": "s072"
+    },
+    {
+     "id": "b",
+     "text": "Take 100% cash and walk away forever without returning to Orchard.",
+     "next": "s070"
+    }
+   ]
+  },
+  "s070": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "The Golden Exit",
+   "arrival": {
+    "type": "visitor",
+    "from": "Bank Manager",
+    "subject": "Wire Confirmation: $400,000,000",
+    "body": "Your bank account confirms four hundred million dollars in liquid cash. But back in Cupertino, Orchard's leadership drifts without a captain.",
+    "icon": "🚪"
+   },
+   "narration": "You took the cash and left the company to be run by the same committee that drove it to the brink of disaster. Within eighteen months, Orchard declared bankruptcy. The company you founded was erased.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Enjoy your fortune and ignore Orchard's demise.",
+     "next": "s071"
+    },
+    {
+     "id": "b",
+     "text": "Step in, take payment in stock, and assume executive leadership.",
+     "next": "s072"
+    }
+   ]
+  },
+  "s071": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "Rich But Rootless",
+   "arrival": {
+    "type": "newspaper",
+    "from": "San Jose Mercury",
+    "subject": "Orchard Computers Closes Its Doors Forever",
+    "body": "Cupertino campus is bulldozed for shopping malls. A sad end to the pioneer of personal computing.",
+    "icon": "📰"
+   },
+   "narration": "You chose personal wealth over saving your life's work. You became an ultra-wealthy spectator while your legacy was ground into dust.",
+   "ending": {
+    "kind": "lose",
+    "title": "Chose the Money Over the Mission",
+    "summary": "Taking cash instead of returning to lead Orchard allowed the leaderless company to slide into total bankruptcy.",
+    "reason": "Great founders are not motivated solely by liquid cash. Abandoning your creation when it needs your leadership guarantees its destruction.",
+    "lesson": "When history calls you back to the arena, don't take the buyout."
+   }
+  },
+  "s072": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "Cleaning House",
+   "arrival": {
+    "type": "memo",
+    "from": "sam",
+    "subject": "Executive Directive – The 4-Box Matrix",
+    "body": "On your first day as Interim CEO, you summon the executive staff into the main auditorium. You walk to the whiteboard and draw a simple two-by-two grid.",
+    "icon": "📝"
+   },
+   "narration": "Orchard is manufacturing forty-two different computer models with confusing numbers like Orchard Pro 7200, 7500, 8500, and 9600. Even the engineers don't know which one to recommend to a friend. You draw a horizontal line and a vertical line on the whiteboard: Consumer vs. Professional on top; Desktop vs. Portable on the side. Four products. That's it. You look the executive team in the eye. When everything is a priority, nothing is a priority. Orchard will do four things brilliantly.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Cancel thirty-eight bloated product lines and focus all engineering on four great machines.",
+     "next": "s072b"
+    },
+    {
+     "id": "b",
+     "text": "Form twelve cross-functional committees to evaluate the product lines over twelve months.",
+     "next": "s073"
+    }
+   ]
+  },
+  "s072b": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "The Executive Walkout",
+   "arrival": {
+    "type": "visitor",
+    "from": "Senior Vice Presidents",
+    "subject": "Resignation Threat Ultimatum",
+    "body": "Five senior vice presidents march into your office. They threaten to resign immediately if you cancel their pet projects: printers, digital cameras, and handheld organizers. They expect you to back down.",
+    "icon": "🚪"
+   },
+   "narration": "This is the crucible of the turnaround. If you back down to preserve peace with legacy executives, the 4-box matrix dies on the whiteboard. If you accept their resignations, you will promote hungry young designers and engineers who have been starved of leadership for a decade. The old guard packs their leather briefcases and leaves the campus. The young designers in the studio give you a standing ovation.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Accept their resignations on the spot and empower young designers.",
+     "next": "s075"
+    },
+    {
+     "id": "b",
+     "text": "Cave in and restore the printer and camera divisions to keep the peace.",
+     "next": "s073"
+    }
+   ]
+  },
+  "s073": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "Death by Committee",
+   "arrival": {
+    "type": "report",
+    "from": "Committee Steering Group",
+    "subject": "Mid-Year Progress Report: Phase 1 Evaluation",
+    "body": "After six months of meetings, the committees produce an eight-hundred-page binder recommending that all forty-two product lines continue with minor cosmetic tweaks.",
+    "icon": "📋"
+   },
+   "narration": "Committees are designed to avoid accountability and preserve bureaucratic turf. While your managers argued over spreadsheet formatting, Orchard burned through its last cash reserves.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Approve another six months of committee review.",
+     "next": "s074"
+    },
+    {
+     "id": "b",
+     "text": "Disband every committee, draw the 4-box matrix on the board, and cancel the bloat.",
+     "next": "s075"
+    }
+   ]
+  },
+  "s074": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "Paralyzed by Process",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Wall Street Journal",
+    "subject": "Orchard Computers Insolvency Notice",
+    "body": "Unable to halt chronic manufacturing losses, Orchard Computers files for Chapter 7 liquidation.",
+    "icon": "📰"
+   },
+   "narration": "Turnarounds require surgical speed and radical focus. By outsourcing critical product decisions to bureaucratic committees, you let the company bleed to death.",
+   "ending": {
+    "kind": "lose",
+    "title": "Strangled by Committee Paralysis",
+    "summary": "Refusing to make decisive product cuts allowed committee indecision to exhaust the company's remaining cash.",
+    "reason": "In a turnaround crisis, consensus is fatal. Leaders must make bold, swift cuts to eliminate waste and focus resources on core winners.",
+    "lesson": "Decide with conviction, or die by consensus."
+   }
+  },
+  "s075": {
+   "chapter": "Chapter 6 – The Comeback Deal",
+   "title": "The Four-Box Focus",
+   "arrival": {
+    "type": "chart",
+    "from": "elena",
+    "subject": "New Product Architecture Matrix",
+    "body": "The board room displays your clean strategy. Four products: Consumer Desktop, Consumer Portable, Professional Desktop, Professional Portable.",
+    "icon": "📈"
+   },
+   "exhibits": [
+    {
+     "type": "table",
+     "title": "Orchard Four-Quadrant Product Strategy",
+     "columns": [
+      "Category",
+      "Desktop",
+      "Portable"
+     ],
+     "rows": [
+      [
+       "Consumer",
+       "All-in-One iMac ($1,299)",
+       "iBook Laptop ($1,599)"
+      ],
+      [
+       "Professional",
+       "Power Desktop Tower ($2,499)",
+       "PowerBook Titanium ($2,999)"
+      ]
+     ]
+    }
+   ],
+   "narration": "By canceling dozens of dead-end projects—including printers, scanners, and personal organizers—you immediately stop three hundred million dollars of annual cash burn. The engineering talent is concentrated on one singular machine: a friendly, translucent consumer desktop computer. The four-box matrix brings clarity to five thousand employees. Every engineer now knows exactly what they are building and why.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Resolve the looming Titan patent lawsuit to secure our financial flank.",
+     "next": "s076"
+    }
+   ]
+  },
+  "s076": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "The Titan Truce",
+   "arrival": {
+    "type": "news_alert",
+    "from": "brody",
+    "subject": "Titan Threatens Total Patent Injunction",
+    "body": "Marcus Brody and Titan legal file a sweeping patent infringement suit claiming Orchard's graphical interface infringes Titan enterprise patents. They demand eighty million dollars in damages.",
+    "icon": "🚨"
+   },
+   "narration": "A prolonged legal war will bankrupt Orchard in court before the new consumer computer can hit the market. You need an unexpected, audacious move: call the CEO of Titan, offer a five-year patent cross-licensing pact, agree to bundle Titan's web browser, and negotiate a one hundred and fifty million dollar non-voting investment in Orchard. Brody sighs on the speakerphone and concedes the truce. With Titan's check cleared, Orchard has three hundred million dollars of breathing room.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Negotiate the $150M investment and patent truce with Titan.",
+     "next": "s079"
+    },
+    {
+     "id": "b",
+     "text": "Declare total legal war against Titan and fight in court for a decade.",
+     "next": "s077"
+    }
+   ]
+  },
+  "s077": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "The Patent Quagmire",
+   "arrival": {
+    "type": "report",
+    "from": "Federal Court Docket",
+    "subject": "Preliminary Injunction Enforced Against Orchard",
+    "body": "Federal judge issues an injunction halting shipment of all Orchard products pending patent trial. Cash flow stops immediately.",
+    "icon": "📋"
+   },
+   "narration": "Pride blinded you to economic reality. Titan had five billion dollars of cash in reserve; Orchard had sixty days of payroll left. The court injunction starved your factories of cash.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Try to fight on with zero cash flow.",
+     "next": "s078"
+    },
+    {
+     "id": "b",
+     "text": "Swallow your pride, call Titan back, and negotiate the investment pact.",
+     "next": "s079"
+    }
+   ]
+  },
+  "s078": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "Crushed in Court",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Wall Street Journal",
+    "subject": "Titan Injunction Forces Orchard Shutdown",
+    "body": "Unable to ship products due to patent litigation, Orchard Computers dismisses its workforce.",
+    "icon": "📰"
+   },
+   "narration": "You chose an unwinnable ego war over pragmatism. When your company is fighting for survival, peace with an old adversary can buy the time needed to build your next victory.",
+   "ending": {
+    "kind": "lose",
+    "title": "Bankrupted by Legal Pride",
+    "summary": "Refusing to settle patent disputes with Titan caused devastating injunctions that halted product shipments.",
+    "reason": "Business is not a holy war; it is a game of survival and leverage. Pragmatic alliances with rivals buy the runway needed to innovate.",
+    "lesson": "Make peace with giants while you rebuild your strength."
+   }
+  },
+  "s079": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "Reuniting with Wes",
+   "arrival": {
+    "type": "visitor",
+    "from": "wes",
+    "subject": "Midnight Hardware Inspection",
+    "body": "Wes walks into the industrial design studio holding a circuit board. He examines the curved blue plastic mockups on the pedestal. 'Sam, if you eliminate the floppy disk drive, people will scream. But USB is twenty times faster.'",
+    "icon": "🛠️"
+   },
+   "narration": "Every personal computer in 1998 comes with a 3.5-inch floppy drive and legacy beige serial ports. You and Wes want to make a radical leap: eliminate the floppy drive entirely, adopt the untested new USB standard, and build a translucent, egg-shaped computer with a built-in handle on top so people aren't afraid to touch it. Wes laughs and taps the translucent prototype with his screwdriver. You and Wes are back in your element, making tools for humanity.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Courageously eliminate the floppy drive and embrace USB and translucent design.",
+     "next": "s082"
+    },
+    {
+     "id": "b",
+     "text": "Play it safe: keep the floppy drive and wrap it in a standard beige box.",
+     "next": "s080"
+    }
+   ]
+  },
+  "s080": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "The Safe Compromise",
+   "arrival": {
+    "type": "memo",
+    "from": "Marketing Focus Group",
+    "subject": "Reaction to Beige Design",
+    "body": "Focus group respondents yawn at the beige box mockup: 'It looks just like our office computer at work. Boring.'",
+    "icon": "📝"
+   },
+   "narration": "By playing it safe, you stripped the machine of its emotional soul. Consumers didn't want another dull office tool; they wanted a machine that sparked joy, creativity, and excitement.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Ship the safe beige box anyway.",
+     "next": "s081"
+    },
+    {
+     "id": "b",
+     "text": "Trash the beige box, bring back the translucent Bondi Blue shell, and ditch the floppy.",
+     "next": "s082"
+    }
+   ]
+  },
+  "s081": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "Lost in the Beige Sea",
+   "arrival": {
+    "type": "newspaper",
+    "from": "PC Magazine",
+    "subject": "Orchard Comeback Computer Fails to Stand Out",
+    "body": "Reviewers note that Orchard's new desktop offers nothing distinctive in a market flooded with identical cheap beige clones.",
+    "icon": "📰"
+   },
+   "narration": "Safety is the most dangerous path in design. In a world full of gray commodities, blending in is slow death. Orchard needed an emotional lightning bolt, not another beige box.",
+   "ending": {
+    "kind": "lose",
+    "title": "Drowned in the Beige Sea",
+    "summary": "Reverting to conservative beige styling and legacy floppy drives made your comeback computer invisible.",
+    "reason": "When your company is on the brink of death, incremental safety guarantees failure. Only bold, distinctive differentiation captures the imagination.",
+    "lesson": "Safe is dangerous. Bold is your only shot."
+   }
+  },
+  "s082": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "Bondi Blue",
+   "arrival": {
+    "type": "visitor",
+    "from": "elena",
+    "subject": "The Translucent Shell Arrives",
+    "body": "Elena places the final prototype on your desk. The casing is molded in custom Bondi Blue translucent plastic. You can see the internal shielding, the gleaming circuitry, and the carry handle on top.",
+    "icon": "🎨"
+   },
+   "narration": "It doesn't look like any computer in human history. It looks friendly, approachable, and alive. You plug in one power cable and one phone line for the internet. Within sixty seconds, the machine is online. It is called the Orchard iMac. Elena watches your reaction as you lift the built-in handle. It is tactile, playful, and breathtakingly fast. It is ready for the world.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Approve full manufacturing and rehearse the keynote presentation relentlessly.",
+     "next": "s085"
+    },
+    {
+     "id": "b",
+     "text": "Let corporate marketing partners add 15 corporate sponsorship slides to the keynote.",
+     "next": "s083"
+    }
+   ]
+  },
+  "s083": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "The Cluttered Message",
+   "arrival": {
+    "type": "memo",
+    "from": "Corporate Sponsor Committee",
+    "subject": "Keynote Slide Additions",
+    "body": "Marketing partners insert forty minutes of corporate telecommunications slides, modem standards presentations, and accounting software demos into your keynote draft.",
+    "icon": "📝"
+   },
+   "narration": "A launch keynote is not a corporate tradeshow conference; it is theatrical storytelling. Diluting your pure product message with corporate partner logos destroys the magic.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Allow all sponsor slides to stay in the presentation.",
+     "next": "s084"
+    },
+    {
+     "id": "b",
+     "text": "Delete every single sponsor slide, restore pure product focus, and rehearse.",
+     "next": "s085"
+    }
+   ]
+  },
+  "s084": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "The Boring Keynote",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Wired Magazine",
+    "subject": "Orchard Keynote Bores Audience with Corporate Memos",
+    "body": "Reporters leave halfway through a tedious two-hour corporate presentation, missing the new computer entirely.",
+    "icon": "📰"
+   },
+   "narration": "You allowed corporate bureaucracy to smother your storytelling. When introducing a revolution, simplicity and clarity are everything.",
+   "ending": {
+    "kind": "lose",
+    "title": "Smothered by Corporate PR Bloat",
+    "summary": "Allowing sponsors and committees to clutter your launch keynote destroyed product excitement and media coverage.",
+    "reason": "Product storytelling demands relentless focus. If you try to say twenty things, your audience remembers nothing.",
+    "lesson": "One clean story beats a thousand corporate slides."
+   }
+  },
+  "s085": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "The Rehearsal Night",
+   "arrival": {
+    "type": "memo",
+    "from": "Stage Manager",
+    "subject": "Flint Center Auditorium Ready",
+    "body": "It is 2:00 AM the night before launch. The Flint Center stage is dark except for a single pinpoint spotlight illuminating a cloth-covered pedestal. You have rehearsed the demo thirty-four times.",
+    "icon": "📝"
+   },
+   "narration": "Everything is ready. The manufacturing plant in California has five thousand units packaged in translucent carry-boxes. The software boots Lumina OS in twelve seconds. You take a breath. Twenty-two years after building the first board in your parents' garage, you are ready to show the world who you are. The backstage technicians whisper in hushed tones. You adjust your black turtleneck and take a slow, deliberate breath.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Step onto the stage, pull off the cloth, and unveil the future.",
+     "next": "s088"
+    },
+    {
+     "id": "b",
+     "text": "Panic at the last minute and add a safe, generic floppy drive disclaimer.",
+     "next": "s086"
+    }
+   ]
+  },
+  "s086": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "Hesitation on the Brink",
+   "arrival": {
+    "type": "memo",
+    "from": "PR Department",
+    "subject": "Apology Draft for Missing Floppy Drive",
+    "body": "PR draft begins: 'While we understand consumers still love floppy drives, we apologize for any inconvenience...'",
+    "icon": "📝"
+   },
+   "narration": "Apologizing for your own innovation signals weakness and doubt. Visionaries do not apologize for bringing the world into the future; they lead with unshakeable conviction.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Read the defensive apology on stage.",
+     "next": "s087"
+    },
+    {
+     "id": "b",
+     "text": "Tear up the apology, walk to the podium, and introduce the machine with pride.",
+     "next": "s088"
+    }
+   ]
+  },
+  "s087": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "Defensive Disaster",
+   "arrival": {
+    "type": "newspaper",
+    "from": "Tech Herald",
+    "subject": "Orchard Apologetic and Uncertain on Stage",
+    "body": "Audience reacts with skepticism as CEO spends half of presentation apologizing for omitted legacy ports.",
+    "icon": "📰"
+   },
+   "narration": "Doubt is contagious. If you don't believe in your own design convictions, your customers won't either.",
+   "ending": {
+    "kind": "lose",
+    "title": "Undermined by Timid Conviction",
+    "summary": "Apologizing for innovative design choices destroyed customer confidence in your vision.",
+    "reason": "True innovation requires bold courage. When you eliminate legacy standards, articulate the future benefits with unyielding conviction.",
+    "lesson": "Never apologize for making the future."
+   }
+  },
+  "s088": {
+   "chapter": "Chapter 7 – Rebuilding & The Keynote",
+   "title": "Under the Spotlight",
+   "arrival": {
+    "type": "news_alert",
+    "from": "San Francisco Chronicle",
+    "subject": "Live from Cupertino: The Rebirth of Orchard",
+    "body": "Two thousand journalists, engineers, and customers pack the auditorium. The lights dim. The single spotlight shines bright on the stage. You walk out to thunderous applause.",
+    "icon": "🚨"
+   },
+   "narration": "You take the black velvet cloth and pull it away. The translucent Bondi Blue iMac glows under the spotlight. The machine plays a crisp musical chord and types 'hello' on the sharp, beautiful screen. The crowd erupts into a standing ovation. You did it. Against all odds, with relentless focus, unyielding design discipline, and total belief in the power of great tools, you built it, lost it, and won it back. The green cursor pulses. The word 'hello' glows in Bondi Blue. The roar of the auditorium shakes the floor beneath your shoes.",
+   "choices": [
+    {
+     "id": "a",
+     "text": "Take in the applause, thank Wes and the team, and claim your victory.",
+     "next": "s_win_glory"
+    }
+   ]
+  },
+  "s_win_glory": {
+   "chapter": "Epilogue – Triumph",
+   "title": "Garage to Glory: The Comeback King",
+   "narration": "The iMac becomes the fastest-selling computer in American history. Within six months, Orchard returns to sustained profitability. Lumina OS powers the modern internet era, while your design philosophy transforms consumer electronics forever. You proved that vision, gross margin discipline, customer focus, and the courage to say no are the true engines of greatness. Welcome to the summit. You stand with Wes Ortega beneath the auditorium lights. You built Orchard in a garage, lost it to a hostile board, and won it back on stage.",
+   "ending": {
+    "kind": "win",
+    "title": "The Ultimate Comeback",
+    "summary": "You steered Orchard Computers from a dusty California garage to world leadership, survived a devastating executive board ouster, built revolutionary software at Lantern Labs, and orchestrated the greatest corporate turnaround in technological history.",
+    "lesson": "Focus, discipline, and uncompromising vision will outlast any setback."
+   }
+  }
+ },
+ "lessons": [
+  "Focus means saying no to a hundred tempting ideas to make one thing truly great.",
+  "Gross margins matter: selling at cost never scales into a sustainable enterprise.",
+  "Product vision and engineering integrity must lead the company, not corporate committees.",
+  "Cash runway is company oxygen: cut burn rate quickly before pride runs you into the ground.",
+  "True innovation comes from building tools that make people more capable, not just more corporate."
+ ]
+}

@@ -14,23 +14,24 @@ async function main() {
   const electronBuilder = require("electron-builder");
   const { Platform, Arch } = electronBuilder;
   const config = {
-    appId: "com.boardroomlogic.app",
-    productName: "Boardroom Logic",
+    appId: "com.spotlightbusinessplay.app",
+    productName: "Spotlight Business Play",
     directories: {
       buildResources: path.join(root, "..", "build"),
       output: "release",
     },
-    files: ["src/**/*", "vendor/**/*"],
+    files: ["src/**/*", "assets/**/*"],
     appx: {
       identityName: identity.identityName,
       publisher: identity.publisher,
       publisherDisplayName: identity.publisherDisplayName,
-      applicationId: "BoardroomLogic",
-      displayName: "Boardroom Logic",
+      applicationId: "SpotlightBusinessPlay",
+      displayName: "Spotlight Business Play",
+      backgroundColor: "#0e172e",
       languages: ["en-US"],
       showNameOnTiles: true,
       setBuildNumber: false,
-      artifactName: "BoardroomLogic-${version}-${arch}.appx",
+      artifactName: "SpotlightBusinessPlay-${version}-${arch}.appx",
     },
     win: {
       icon: path.join(root, "..", "build", "icon.ico"),

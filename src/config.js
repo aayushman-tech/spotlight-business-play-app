@@ -1,14 +1,14 @@
-// src/config.js - THE ONE configuration file for Boardroom Logic.
+// src/config.js - THE ONE configuration file for Spotlight Business Play.
 // Change the game title, the stories source and version behaviour here.
 
 module.exports = {
   // Display name of the game (used in the window title and UI).
-  gameTitle: "Boardroom Logic",
+  gameTitle: "Spotlight Business Play",
 
   // The public stories repository the app checks on launch.
   stories: {
     owner: "aayushman-tech",
-    repo: "boardroom-logic-stories",
+    repo: "spotlight-business-play-stories",
     branch: "main",
   },
 
@@ -25,13 +25,13 @@ module.exports = {
   },
 
   // Bundled fallback story used when there is no network and no cache yet.
-  bundledDemoPath: "vendor/demo.json",
+  bundledDemoPath: "assets/default-story.json",
 
   // Local storage keys (all inside Electron userData; nothing leaves the device).
   storage: {
     manifest: "cache/manifest.json",
     storyDir: "cache/stories",
-    profile: "profile.json",
+    progress: "progress.json",
     settings: "settings.json",
   },
 };

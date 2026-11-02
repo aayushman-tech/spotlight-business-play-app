@@ -25,7 +25,7 @@ function compareVersions(a, b) {
 // Returns a manifest view: { playable: [entries], blocked: [{entry, reason}], unreachable: [], manifest violations }
 export function compileManifest(manifest, { appVersion, localDate, storyStatus = {} }) {
   const result = { playable: [], blocked: [], manifestIssues: [] };
-  if (!manifest || manifest.schemaVersion !== 1 || !Array.isArray(manifest.stories)) {
+  if (!manifest || manifest.schemaVersion !== 2 || !Array.isArray(manifest.stories)) {
     result.manifestIssues.push("manifest is missing or has unsupported schemaVersion");
     return result;
   }
@@ -65,19 +65,6 @@ export function compileManifest(manifest, { appVersion, localDate, storyStatus =
     a.entry.publishDate < b.entry.publishDate ? 1 : a.entry.publishDate > b.entry.publishDate ? -1 : 0
   );
   return result;
-}
-
-// Today's Story: newest playable story the player has NOT completed;
-// if all playable stories are completed, fall back to newest playable.
-export function pickTodaysStory(playable, completedMap) {
-  for (const entry of playable) {
-    if (!completedMap[entry.id] || !completedMap[entry.id].completed) return entry;
-  }
-  return playable.length ? playable[0] : null;
-}
-
-export function archiveStories(playable) {
-  return playable.slice(1); // everything except today's card, newest first
 }
 
 export { compareVersions };

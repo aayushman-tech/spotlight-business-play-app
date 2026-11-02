@@ -1,37 +1,41 @@
 {
-  "name": "boardroom-logic",
-  "productName": "Boardroom Logic",
-  "version": "1.0.0",
-  "description": "A free interactive business reasoning game. Read the story, weigh the numbers, call the shots.",
-  "author": "Boardroom Logic",
+  "name": "spotlight-business-play",
+  "productName": "Spotlight Business Play",
+  "version": "1.1.0",
+  "description": "A 90s-style choose-your-path business adventure game. Read the scene, make the call, build an empire or face game over.",
+  "author": "Spotlight-Aayushman",
   "license": "MIT",
   "main": "src/main/main.js",
   "type": "commonjs",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aayushman-tech/spotlight-business-play-app.git"
+  },
   "scripts": {
     "start": "electron .",
     "test": "node --test tests/engine.test.mjs",
     "test:smoke": "node --test tests/electron-smoke.test.mjs",
+    "make-icons": "node tools/make-icons.js",
     "build:exe": "electron-builder --win nsis",
     "build:store": "node scripts/build-store-package.js",
     "dist": "npm run build:exe && npm run build:store",
-    "make-icons": "node scripts/make-icons.mjs",
     "screenshots": "node scripts/take-screenshots.mjs"
   },
   "build": {
-    "appId": "com.boardroomlogic.app",
-    "productName": "Boardroom Logic",
+    "appId": "com.spotlightbusinessplay.app",
+    "productName": "Spotlight Business Play",
     "directories": {
       "buildResources": "build",
       "output": "release"
     },
     "files": [
       "src/**/*",
-      "vendor/**/*"
+      "assets/**/*"
     ],
     "win": {
       "icon": "build/icon.ico",
-      "artifactName": "BoardroomLogic-Setup-${version}-${arch}.${ext}",
+      "artifactName": "SpotlightBusinessPlay-Setup-${version}-${arch}.${ext}",
       "target": [
         {
           "target": "nsis",
@@ -48,20 +52,16 @@
       "allowToChangeInstallationDirectory": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Boardroom Logic"
+      "shortcutName": "Spotlight Business Play"
     },
     "publish": null
   },
   "devDependencies": {
     "electron": "^33.0.0",
     "electron-builder": "^25.1.8",
-    "playwright": "^1.48.0",
     "playwright": "^1.48.0"
   },
   "engines": {
     "node": ">=20"
-  },
-  "allowScripts": {
-    "electron@33.4.11": true
   }
 }

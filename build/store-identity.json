@@ -1,8 +1,8 @@
 {
-  "_comment": "Boardroom Logic - Microsoft Store identity from Partner Center for product ID 9PLS11NHDTWW.",
-  "identityName": "Spotlight-Aayushman.BoardroomLogic",
+  "_comment": "Spotlight Business Play - Microsoft Store identity from Partner Center. Reserve 'Spotlight Business Play' in Partner Center, then copy Package/Identity/Name, Publisher, and PublisherDisplayName here.",
+  "identityName": "Spotlight-Aayushman.SpotlightBusinessPlay",
   "publisher": "CN=0C8C7664-35C1-4155-89E8-45197A016E16",
   "publisherDisplayName": "Spotlight-Aayushman",
-  "storeId": "9PLS11NHDTWW",
-  "packageFamilyName": "Spotlight-Aayushman.BoardroomLogic_cv0pdw9d4v4z6"
+  "storeId": "RESERVE_IN_PARTNER_CENTER",
+  "packageFamilyName": "Spotlight-Aayushman.SpotlightBusinessPlay_cv0pdw9d4v4z6"
 }

@@ -1,25 +1,31 @@
-// app.js - renderer controller. Story text is rendered with textContent only, never innerHTML.
+// app.js - Spotlight Business Play renderer controller.
+// Pure 90s choose-your-path adventure: immediate scene transitions, no scoring HUD, clean autosave.
+"use strict";
+
 import {
-  emptyState, choose, visibleChoices, logicScore, rankName, serialize, deserialize, practisedSkills,
+  emptyState,
+  choose,
+  visibleChoices,
+  restartStory,
 } from "../../engine/engine.mjs";
-import { localDateString, compileManifest, pickTodaysStory, compareVersions } from "../../engine/manifest.mjs";
+import { compileManifest } from "../../engine/manifest.mjs";
 import { renderExhibit } from "./charts.js";
 
 const $ = (id) => document.getElementById(id);
-const api = window.boardroom;
+const api = window.spotlight;
 
 const app = {
-  profile: null,          // { completed: {storyId: {...}}, progress: {storyId: {state, updatedAt}} }
-  settings: { theme: "system", textsize: 3, reduceMotion: false },
-  data: null,             // last stories:refresh result
-  view: null,             // compiled manifest view
-  story: null,            // currently loaded story
-  entry: null,            // manifest entry of current story
-  state: null,            // engine state for current story
+  progress: { completed: [], inProgress: {} },
+  settings: { theme: "system", textsize: 3 },
+  manifestData: null,
+  compiledView: null,
+  story: null,
+  state: null,
   appInfo: null,
+  lastFocusCheck: Date.now(),
 };
 
-// ---------------- small helpers ----------------
+// ---------------- Helpers ----------------
 
 function el(tag, cls, text) {
   const node = document.createElement(tag);
@@ -33,66 +39,46 @@ function showToast(msg) {
   t.textContent = msg;
   t.hidden = false;
   clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => { t.hidden = true; }, 3200);
-}
-
-function banner(msg, tone = "info") {
-  const b = $("home-banner");
-  b.textContent = msg;
-  b.dataset.tone = tone;
-  b.hidden = false;
-}
-
-function clearBanners() {
-  document.querySelectorAll("#home-banner").forEach((b) => { b.hidden = true; b.textContent = ""; });
+  showToast.timer = setTimeout(() => {
+    t.hidden = true;
+  }, 3000);
 }
 
 function showScreen(name) {
-  for (const s of document.querySelectorAll(".screen")) s.hidden = true;
-  $("screen-" + name).hidden = false;
-  const panel = $("case-panel");
-  panel.classList.remove("open");
-  $("btn-case").setAttribute("aria-expanded", "false");
-  $("btn-case").hidden = name !== "play";
-  $("case-panel").hidden = name !== "play";
+  for (const s of document.querySelectorAll(".screen")) {
+    s.hidden = true;
+  }
+  const target = $("screen-" + name);
+  if (target) {
+    target.hidden = false;
+  }
   window.scrollTo(0, 0);
 }
 
-function fmtStat(story, statId, v) {
-  const st = (story.stats || []).find((s) => s.id === statId);
-  const n = Number(v);
-  if (!st) return String(v);
-  switch (st.format) {
-    case "currency":
-      return (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString("en-US");
-    case "percent":
-      return Math.round(n * 10) / 10 + "%";
-    case "rating": {
-      const stars = Math.max(0, Math.min(5, Math.round(n / 20)));
-      return stars > 0 ? "★".repeat(stars) : "☆";
-    }
-    default:
-      return String(Math.round(n * 10) / 10);
-  }
-}
-
-// ---------------- settings ----------------
+// ---------------- Settings ----------------
 
 async function loadSettings() {
   try {
-    app.settings = { ...app.settings, ...(await api.loadSettings()) };
-  } catch { /* defaults fine */ }
+    const saved = await api.loadSettings();
+    if (saved) app.settings = { ...app.settings, ...saved };
+  } catch {
+    /* defaults */
+  }
   applySettings();
 }
 
 function applySettings() {
   const root = document.documentElement;
-  root.dataset.textsize = String(app.settings.textsize ?? 3);
-  root.dataset.motion = app.settings.reduceMotion ? "reduced" : "auto";
+  const size = app.settings.textsize ?? 3;
+  root.dataset.textsize = String(size);
+  $("textsize-value").textContent = String(size);
+
   if (app.settings.theme === "light" || app.settings.theme === "dark") {
     root.dataset.theme = app.settings.theme;
+    $("set-theme").value = app.settings.theme;
   } else {
     delete root.dataset.theme;
+    $("set-theme").value = "system";
   }
 }
 
@@ -100,700 +86,479 @@ function saveSettings() {
   api.saveSettings(app.settings).catch(() => {});
 }
 
-// ---------------- stories data ----------------
+// ---------------- Progress ----------------
 
-function setNetState(state, label) {
-  const ind = $("net-indicator");
-  ind.dataset.state = state;
-  $("net-label").textContent = label;
-}
-
-async function refreshData({ online }) {
-  setNetState("checking", "checking…");
-  const res = await api.refreshStories({ online });
-  app.data = res;
-  compileView();
-  setNetState(res.offline ? "offline" : "online",
-    res.offline ? (res.fallBackToDemo ? "offline – demo story" : "offline – cached") : "online");
-  return res;
-}
-
-function compileView() {
-  const res = app.data;
-  if (!res) {
-    app.view = { playable: [], blocked: [], manifestIssues: [] };
-    return;
-  }
-  app.view = compileManifest(
-    { schemaVersion: 1, minAppVersion: res.minAppVersion, stories: res.stories || [] },
-    {
-      appVersion: app.appInfo?.version || "1.0.0",
-      localDate: localDateString(new Date()),
-      storyStatus: res.storyStatus || {},
+async function loadProgress() {
+  try {
+    const p = await api.loadProgress();
+    if (p && typeof p === "object") {
+      app.progress = {
+        completed: Array.isArray(p.completed) ? p.completed : [],
+        inProgress: p.inProgress && typeof p.inProgress === "object" ? p.inProgress : {},
+      };
     }
-  );
+  } catch {
+    app.progress = { completed: [], inProgress: {} };
+  }
 }
 
-// ---------------- HOME ----------------
-
-function isDoneStory(id) {
-  return !!app.profile?.completed?.[id]?.completed;
+function saveProgress() {
+  api.saveProgress(app.progress).catch(() => {});
 }
 
-function todaysEntry() {
-  const playable = app.view?.playable || [];
-  if (playable.length === 0) return null;
-  const pick = pickTodaysStory(playable, app.profile?.completed || {});
-  const fallback = pick === null && playable.length > 0;
-  return { pick: fallback ? playable[0] : pick, isFallback: fallback };
+// ---------------- Stories & Manifest ----------------
+
+async function refreshStories(online = true) {
+  const netLabel = $("net-label");
+  const netIndicator = $("net-indicator");
+
+  try {
+    const res = await api.refreshStories({ online });
+    app.manifestData = res;
+
+    if (res.offline) {
+      netLabel.textContent = "Offline – showing saved stories";
+      netIndicator.classList.add("offline");
+    } else {
+      netLabel.textContent = "Online – up to date";
+      netIndicator.classList.remove("offline");
+    }
+
+    const appVersion = app.appInfo?.version || "1.1.0";
+    app.compiledView = compileManifest(
+      {
+        schemaVersion: 2,
+        minAppVersion: res.minAppVersion,
+        stories: res.stories || [],
+      },
+      {
+        appVersion,
+        localDate: new Date(),
+        storyStatus: res.storyStatus || {},
+      }
+    );
+  } catch {
+    netLabel.textContent = "Offline – showing saved stories";
+    netIndicator.classList.add("offline");
+  }
+
+  renderHome();
 }
 
-const BLOCKED_REASON_TEXT = {
-  min_app_version: "needs an app update",
-  hash_mismatch: "failed its integrity check",
-  schema_invalid: "is not valid for this app version",
-  missing: "could not be downloaded",
-  unreachable: "could not be downloaded",
-  not_published_yet: "unlocks on its publish date",
-};
+// ---------------- Home Screen ----------------
 
 function renderHome() {
-  const slot = $("home-today");
-  slot.textContent = "";
-  $("home-banner").hidden = true;
-  $("home-banner").textContent = "";
+  const list = $("stories-list");
+  list.replaceChildren();
 
-  const issues = [];
-  if (app.data?.fallBackToDemo) {
-    issues.push("You're offline with no cached stories yet – the bundled demo story is ready to play. " +
-      "Connect to the internet and refresh to load the real catalogue.");
-  } else if (app.view?.manifestIssues?.length) {
-    issues.push("The stories catalogue could not be fully verified: " + app.view.manifestIssues.join("; "));
-  }
+  const stories = app.compiledView?.playable || app.manifestData?.stories || [];
 
-  const today = todaysEntry();
-  const playable = app.view?.playable || [];
-
-  if (playable.length === 0) {
-    const card = el("div", "card card-loading");
-    card.appendChild(el("p", null,
-      app.data?.offline && !app.data?.fallBackToDemo
-        ? "You're offline and there's nothing playable right now."
-        : "No published story is available yet. Check back soon – the writers are on it."));
-    card.appendChild(el("p", "muted", "Press “Look for new stories” once you're online."));
-    slot.appendChild(card);
-  } else {
-    const entry = today.pick;
-    const done = isDoneStory(entry.id);
-    const progress = app.profile?.progress?.[entry.id];
-    const card = el("article", "card today-card");
-    card.appendChild(el("span", "today-dot", "▶"));
-    if (!done) card.appendChild(el("span", "badge-new", today.isFallback ? "REPLAY" : "NEW"));
-    card.appendChild(el("h2", "today-title", entry.title));
-    card.appendChild(el("p", "today-subtitle", entry.subtitle));
-    const tags = el("div", "today-tags");
-    tags.appendChild(el("span", "pill", `~${entry.estimatedMinutes} min`));
-    const diff = el("span", "pill", entry.difficulty);
-    diff.dataset.diff = entry.difficulty;
-    tags.appendChild(diff);
-    (entry.tags || []).forEach((t) => tags.appendChild(el("span", "pill", t)));
-    card.appendChild(tags);
-    const actions = el("div", "intro-actions");
-    const play = el("button", "primary-btn", progress && !done ? "Continue ▸" : done ? "Replay ▸" : "Play ▸");
-    play.addEventListener("click", () => openStory(entry, { resume: !!(progress && !done) }));
-    actions.appendChild(play);
-    card.appendChild(actions);
-    if (done && app.profile.completed[entry.id]?.bestScore != null) {
-      card.appendChild(el("p", "dot-continue",
-        `Completed · best Logic Score ${app.profile.completed[entry.id].bestScore}/100`));
-    }
-    slot.appendChild(card);
-
-    // archive = every other playable story, newest first
-    const archive = playable.filter((p) => p.id !== entry.id);
-    const list = $("archive-list");
-    list.textContent = "";
-    for (const e of archive) {
-      const item = el("button", "archive-item");
-      item.type = "button";
-      item.appendChild(el("span", "t", e.title));
-      item.appendChild(el("span", "meta",
-        `~${e.estimatedMinutes} min · ${e.difficulty}` + (isDoneStory(e.id) ? " · ✓ played" : "")));
-      item.appendChild(el("span", "pill", "▸"));
-      item.addEventListener("click", () => openStory(e, { resume: !!app.profile?.progress?.[e.id] }));
-      list.appendChild(item);
-    }
-    $("archive-empty").hidden = archive.length > 0;
-  }
-
-  const archiveListEmpty = (app.view?.playable || []).length < 2;
-  $("archive-empty").hidden = !archiveListEmpty;
-
-  // blocked stories (future / damaged / version-gated)
-  const blocked = app.view?.blocked || [];
-  const listBlock = document.createElement("div");
-  for (const b of blocked) {
-    const row = el("div", "banner");
-    row.style.marginBottom = "8px";
-    row.textContent = b.reason === "min_app_version"
-      ? `${b.entry.title} – Update the app to play this story.`
-      : `${b.entry.title} – ${BLOCKED_REASON_TEXT[b.reason] || b.reason}.`;
-    listBlock.appendChild(row);
-  }
-  // insert blocked banners after archive heading
-  const archiveCol = document.querySelector(".archive-col");
-  const existingBlocks = archiveCol.querySelectorAll(".banner");
-  existingBlocks.forEach((n) => n.remove());
-  if (listBlock.childElementCount) archiveCol.appendChild(listBlock);
-
-  if (issues.length) {
-    banner(issues[0], "error");
-  }
-
-  renderProfileCard();
-}
-
-function renderProfileCard() {
-  const card = $("profile-card");
-  card.textContent = "";
-  const completions = Object.values(app.profile?.completed || {}).filter((c) => c.completed);
-  const storiesCompleted = completions.length;
-  const rated = completions.filter((c) => typeof c.bestScore === "number");
-  const avgScore = rated.length ? Math.round(avg(rated.map((c) => c.bestScore))) : null;
-  const rank = avgScore != null ? rankName(avgScore) : "–";
-  const best = avgScore != null ? `${avgScore}/100` : "–";
-  const streak = computeStreak(completions);
-
-  const ul = el("ul", "records");
-  for (const [k, v] of [
-    ["Current rank", rank],
-    ["Day streak", String(streak)],
-    ["Stories completed", String(storiesCompleted)],
-    ["Average Logic Score", best],
-  ]) {
-    const li = el("li");
-    li.appendChild(el("span", null, k));
-    li.appendChild(el("span", "v", v));
-    ul.appendChild(li);
-  }
-  card.appendChild(ul);
-}
-
-function avg(arr) {
-  return arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
-}
-
-function computeStreak(completions) {
-  const dates = new Set(
-    completions.filter((c) => c.completed && c.date).map((c) => localDateString(new Date(c.date)))
-  );
-  if (dates.size === 0) return 0;
-  let streak = 0;
-  const day = 24 * 3600 * 1000;
-  let cursor = new Date();
-  if (!dates.has(localDateString(cursor))) cursor = new Date(cursor.getTime() - day);
-  while (dates.has(localDateString(cursor))) {
-    streak += 1;
-    cursor = new Date(cursor.getTime() - day);
-  }
-  return streak;
-}
-
-// ---------------- STORY FLOW ----------------
-
-async function openStory(entry, { resume = false } = {}) {
-  let story;
-  try {
-    story = await api.loadStory(entry.id);
-  } catch {
-    story = null;
-  }
-  if (!story) {
-    showToast("This story could not be loaded right now.");
+  if (stories.length === 0) {
+    const emptyCard = el("div", "story-card story-empty");
+    emptyCard.appendChild(el("p", "muted", "No stories available. Check back soon."));
+    list.appendChild(emptyCard);
     return;
   }
-  app.story = story;
-  app.entry = entry;
-  const saved = resume ? app.profile?.progress?.[story.id]?.state : null;
-  try {
-    app.state = saved ? deserialize(JSON.stringify(saved)) : emptyState(story);
-  } catch {
-    app.state = emptyState(story);
-  }
-  renderIntro(!!saved);
-}
 
-function renderIntro(hasSave) {
-  $("intro-story-title").textContent = app.story.title;
-  $("intro-story-subtitle").textContent = app.story.subtitle;
-  const premise = $("intro-premise");
-  premise.textContent = "";
-  for (const p of app.story.premise || []) premise.appendChild(el("p", null, p));
-  const chars = $("intro-characters");
-  chars.textContent = "";
-  for (const c of app.story.characters || []) {
-    const li = el("li");
-    li.appendChild(el("span", "emoji", c.emoji));
-    const div = el("div");
-    div.appendChild(el("span", "name", c.name));
-    div.appendChild(el("p", "role", c.role));
-    li.appendChild(div);
-    chars.appendChild(li);
-  }
-  const diff = $("intro-difficulty");
-  diff.textContent = app.story.difficulty;
-  diff.dataset.diff = app.story.difficulty;
-  $("intro-minutes").textContent = `~${app.entry?.estimatedMinutes ?? "?"} min`;
-  $("intro-skills").textContent = `Skills: ${(app.story.reasoningSkills || []).join(" · ")}`;
-  $("btn-continue-save").hidden = !hasSave;
-  showScreen("intro");
-  $("btn-begin").focus();
-}
+  stories.forEach((story, idx) => {
+    const isCompleted = app.progress.completed.includes(story.id);
+    const inProg = app.progress.inProgress[story.id];
+    const isNew = !isCompleted && !inProg;
 
-function startPlay({ resume = false } = {}) {
-  if (resume) {
-    const saved = app.profile?.progress?.[app.story.id]?.state;
-    try {
-      app.state = saved ? deserialize(JSON.stringify(saved)) : emptyState(app.story);
-    } catch {
-      app.state = emptyState(app.story);
+    const row = el("div", "story-card");
+    row.setAttribute("role", "button");
+    row.setAttribute("tabindex", "0");
+    row.setAttribute("aria-label", `${story.title}. ${isCompleted ? "Completed." : ""}`);
+
+    // Left number
+    const num = el("div", "story-num", String(idx + 1));
+    row.appendChild(num);
+
+    // Center info
+    const info = el("div", "story-info");
+    const titleRow = el("div", "story-title-row");
+    titleRow.appendChild(el("h2", "story-title", story.title));
+
+    if (isCompleted) {
+      const tag = el("span", "badge badge-completed", "✓ Completed");
+      titleRow.appendChild(tag);
+    } else if (isNew) {
+      const tag = el("span", "badge badge-new", "NEW");
+      titleRow.appendChild(tag);
     }
-  } else {
-    app.state = emptyState(app.story);
-  }
-  showScreen("play");
-  renderScene({ animateArrival: true });
-}
+    info.appendChild(titleRow);
 
-function currentScene() {
-  return app.story.scenes[app.state.sceneId];
-}
+    const estMin = story.estimatedMinutes ? `about ${story.estimatedMinutes} min` : "about 35 min";
+    const subText = story.subtitle ? `${story.subtitle} • ${estMin}` : estMin;
+    info.appendChild(el("p", "story-sub", subText));
+    row.appendChild(info);
 
-const ARRIVAL_LABEL = {
-  email: "New email", memo: "Internal memo", phone_call: "Incoming call", chart: "Chart report",
-  news_alert: "News alert", visitor: "At the door", chat_message: "Team chat", contract: "Contract",
-  report: "Office report",
-};
-const ARRIVAL_ICON = {
-  email: "✉️", memo: "📝", phone_call: "📞", chart: "📈", news_alert: "🚨",
-  visitor: "🚪", chat_message: "💬", contract: "📄", report: "📋",
-};
+    // Right Play button
+    const action = el("div", "story-action");
+    const playBtn = el(
+      "button",
+      "play-btn" + (inProg ? " continue" : ""),
+      inProg ? "Continue ▶" : "PLAY ▶"
+    );
+    playBtn.setAttribute("tabindex", "-1"); // row is clickable
+    action.appendChild(playBtn);
+    row.appendChild(action);
 
-function renderScene({ animateArrival = false } = {}) {
-  const scene = currentScene();
-  if (!scene) {
-    showToast("The story hit a broken page. Please restart it from the menu.");
-    return;
-  }
-  document.title = `${app.story.title} – ${scene.title}`;
-  $("chapter-marker").textContent = scene.chapter || "";
-  renderArrival(scene, animateArrival);
-  renderExhibitsOf(scene);
-  renderNarrationOf(scene);
-  renderChoicesOf(scene);
-  renderCaseFile();
-  updateHud();
-  const firstChoice = $("choices-slot").querySelector("button");
-  if (firstChoice && !document.querySelector(".case-panel.open")) firstChoice.focus?.();
-}
-
-function renderArrival(scene, animate) {
-  const slot = $("arrival-slot");
-  slot.textContent = "";
-  const a = scene.arrival;
-  if (!a) return;
-  const card = el("div", "arrival");
-  card.dataset.kind = a.type;
-  const head = el("div", "arrival-head");
-  head.appendChild(el("span", "arrival-icon", a.icon || ARRIVAL_ICON[a.type] || "◈"));
-  const meta = el("div");
-  meta.appendChild(el("div", "arrival-type", ARRIVAL_LABEL[a.type] || a.type));
-  const character = (app.story.characters || []).find((c) => c.id === a.from);
-  meta.appendChild(el("div", "arrival-from",
-    character ? `${character.name} · ${character.role}` : a.from || ""));
-  head.appendChild(meta);
-  if (a.type === "phone_call" || a.type === "news_alert") head.appendChild(el("span", "arrival-ring"));
-  card.appendChild(head);
-  if (a.subject) card.appendChild(el("p", "arrival-subject", a.subject));
-  for (const para of String(a.body).split("\n\n")) {
-    card.appendChild(el("p", "arrival-body", para));
-  }
-  if (animate) {
-    card.style.animation = "none";
-    requestAnimationFrame(() => { card.style.animation = ""; });
-  }
-  slot.appendChild(card);
-}
-
-function renderExhibitsOf(scene) {
-  const slot = $("exhibits-slot");
-  slot.textContent = "";
-  for (const ex of scene.exhibits || []) {
-    const node = renderExhibit(ex);
-    if (node) slot.appendChild(node);
-  }
-}
-
-function renderNarrationOf(scene) {
-  const slot = $("narration-slot");
-  slot.textContent = "";
-  for (const para of String(scene.narration).split("\n\n")) {
-    slot.appendChild(el("p", null, para));
-  }
-}
-
-function updateHud() {
-  const hud = $("hud");
-  hud.textContent = "";
-  for (const st of app.story.stats || []) {
-    const tile = el("div", "hud-stat");
-    tile.appendChild(el("div", "label", st.label));
-    tile.appendChild(el("div", "value", fmtStat(app.story, st.id, app.state.stats[st.id])));
-    hud.appendChild(tile);
-  }
-}
-
-function isEndingScene(scene) {
-  return scene && scene.ending != null && typeof scene.ending === "object";
-}
-
-function renderChoicesOf(scene) {
-  const slot = $("choices-slot");
-  slot.textContent = "";
-  if (isEndingScene(scene)) {
-    const btn = el("button", "primary-btn", "Open the debrief ▸");
-    btn.addEventListener("click", () => renderDebrief());
-    slot.appendChild(btn);
-    return;
-  }
-  const choices = visibleChoices(app.state, app.story);
-  choices.forEach((c, i) => {
-    const btn = el("button", "choice");
-    btn.type = "button";
-    btn.appendChild(el("span", "key", String(i + 1)));
-    btn.appendChild(el("span", null, c.text));
-    btn.addEventListener("click", () => onChoose(c));
-    slot.appendChild(btn);
-  });
-  if (choices.length === 0) {
-    slot.appendChild(el("p", "muted", "No options available – the story is stuck. Try “Restart story”."));
-  }
-}
-
-function flashStatDeltas(deltas) {
-  const hud = $("hud");
-  for (const st of app.story.stats || []) {
-    const d = Number(deltas[st.id]);
-    if (!Math.abs(d)) continue;
-    const valueEl = hud.querySelector(`.hud-stat:nth-child(${(app.story.stats.indexOf(st)) + 1}) .value`);
-    if (valueEl) {
-      valueEl.dataset.dir = d > 0 ? "up" : "down";
-      setTimeout(() => { delete valueEl.dataset.dir; }, 1800);
-    }
-  }
-}
-
-async function autosave() {
-  if (!app.story || !app.state) return;
-  app.profile.progress = app.profile.progress || {};
-  app.profile.progress[app.story.id] = {
-    state: JSON.parse(serialize(app.state)),
-    updatedAt: new Date().toISOString(),
-  };
-  api.saveProfile(app.profile).catch(() => {});
-  updateCaseCount();
-}
-
-async function onChoose(choice) {
-  const result = choose(app.state, app.story, choice.id);
-  if (!result) return; // stale click
-  updateHud();
-  flashStatDeltas(result.deltas);
-  await autosave();
-  showFeedback(choice.feedback || "…", () => {
-    if (app.state.finished) {
-      showEndingScene();
-    } else {
-      renderScene({ animateArrival: true });
-    }
-  });
-}
-
-function showEndingScene() {
-  // Ending scenes have an arrival + narration; show it, then the "Open the debrief" button (rendered by renderChoicesOf).
-  document.title = `${app.story.title} – ${currentScene().title}`;
-  $("chapter-marker").textContent = currentScene().chapter || "";
-  renderArrival(currentScene(), true);
-  renderExhibitsOf(currentScene());
-  renderNarrationOf(currentScene());
-  renderChoicesOf(currentScene());
-  renderCaseFile();
-  updateHud();
-  $("choices-slot").querySelector("button")?.focus();
-}
-
-function showFeedback(text, then) {
-  const layer = $("feedback-layer");
-  $("feedback-text").textContent = text;
-  layer.hidden = false;
-  const ack = $("btn-ack-feedback");
-  ack.focus();
-  ack.onclick = () => {
-    layer.hidden = true;
-    then();
-  };
-}
-
-// ---------------- case file ----------------
-
-function renderCaseFile() {
-  const list = $("case-list");
-  list.textContent = "";
-  $("case-empty").hidden = (app.state?.notes?.length || 0) > 0;
-  for (const note of app.state.notes) {
-    list.appendChild(el("li", null, "🧾 " + note));
-  }
-  updateCaseCount();
-}
-
-function updateCaseCount() {
-  const n = app.state?.notes?.length || 0;
-  const badge = $("case-count");
-  badge.hidden = n === 0;
-  badge.textContent = String(n);
-}
-
-function toggleCasePanel(force) {
-  const panel = $("case-panel");
-  const current = panel.classList.contains("open");
-  const open = force === undefined ? !current : force;
-  panel.classList.toggle("open", open);
-  $("btn-case").setAttribute("aria-expanded", String(open));
-}
-
-// ---------------- debrief ----------------
-
-function markCompleted() {
-  const score = logicScore(app.state);
-  app.profile.completed = app.profile.completed || {};
-  const prev = app.profile.completed[app.story.id] || {};
-  app.profile.completed[app.story.id] = {
-    completed: true,
-    date: prev.date || new Date().toISOString(),
-    lastScore: score,
-    bestScore: Math.max(score, prev.bestScore ?? -1),
-    endingKind: app.state.endingKind,
-  };
-  if (app.profile.progress) delete app.profile.progress[app.story.id];
-  api.saveProfile(app.profile).catch(() => {});
-  return score;
-}
-
-function renderDebrief() {
-  const scene = currentScene();
-  const ending = scene.ending;
-  const score = markCompleted();
-  showScreen("debrief");
-  const kindEl = $("debrief-kind");
-  kindEl.textContent =
-    ({ triumph: "Triumphant ending", solid: "Solid ending", mixed: "Mixed ending", failure: "Failure ending" })[ending.kind] || "Ending";
-  kindEl.dataset.kind = ending.kind;
-  $("debrief-title").textContent = ending.title;
-  $("debrief-summary").textContent = ending.summary;
-
-  const statsList = $("debrief-stats");
-  statsList.textContent = "";
-  for (const st of app.story.stats || []) {
-    const li = el("li");
-    li.appendChild(el("span", null, st.label));
-    li.appendChild(el("span", "v", fmtStat(app.story, st.id, app.state.stats[st.id])));
-    statsList.appendChild(li);
-  }
-
-  $("debrief-score").textContent = `${score}/100`;
-  $("debrief-rank").textContent = `Rank: ${rankName(score)}`;
-  const best = app.profile?.completed?.[app.story.id]?.bestScore;
-  $("debrief-personal-best").textContent = best != null ? `Personal best: ${best}/100` : "";
-
-  const skills = $("debrief-skills");
-  skills.textContent = "";
-  const practised = practisedSkills(app.state);
-  if (practised.length === 0) skills.appendChild(el("li", null, "Practised: (this run had no rated decisions)"));
-  for (const s of practised) skills.appendChild(el("li", null, s));
-
-  const recap = $("debrief-recap");
-  recap.textContent = "";
-  for (const d of app.state.decisions || []) {
-    if (!d.logic) continue;
-    const li = el("li");
-    li.dataset.q = String(d.logic.quality);
-    li.appendChild(el("div", "q",
-      `${d.chapter ? d.chapter + " – " : ""}${d.sceneTitle}: ${d.choiceText}  ` +
-      `(rated ${d.logic.quality > 0 ? "+" + d.logic.quality : d.logic.quality})`));
-    const storyScene = app.story.scenes[d.sceneId];
-    const storyChoice = (storyScene?.choices || []).find((c) => c.id === d.choiceId);
-    li.appendChild(el("div", "why", storyChoice?.logic?.why || `${d.logic.skill || ""}`));
-    recap.appendChild(li);
-  }
-
-  const takeaways = $("debrief-takeaways");
-  takeaways.textContent = "";
-  for (const t of app.story.debriefTakeaways || []) takeaways.appendChild(el("li", null, t));
-
-  document.title = `${app.story.title} – Debrief`;
-}
-
-// ---------------- keyboard ----------------
-
-function initKeyboard() {
-  document.addEventListener("keydown", (e) => {
-    if ($("screen-play").hidden) return;
-    const feedbackOpen = !$("feedback-layer").hidden;
-    if (feedbackOpen) {
+    // Click handler
+    row.addEventListener("click", () => startOrResumeStory(story.id));
+    row.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        $("btn-ack-feedback").click();
+        startOrResumeStory(story.id);
       }
-      return;
-    }
-    if (["1", "2", "3", "4"].includes(e.key)) {
-      const buttons = $("choices-slot").querySelectorAll("button.choice");
-      const btn = buttons[Number(e.key) - 1];
-      if (btn) {
-        e.preventDefault();
-        btn.click();
-      }
-    }
+    });
+
+    list.appendChild(row);
   });
 }
 
-// ---------------- boot ----------------
+// ---------------- Gameplay ----------------
 
-async function init() {
-  await loadSettings();
-  $("set-theme").value = app.settings.theme;
-  $("set-motion").checked = !!app.settings.reduceMotion;
-  $("textsize-value").textContent = String(app.settings.textsize);
+async function startOrResumeStory(storyId) {
+  try {
+    const story = await api.loadStory(storyId);
+    if (!story) {
+      showToast("Unable to load story.");
+      return;
+    }
 
-  const savedProfile = await api.loadProfile();
-  app.profile = {
-    completed: savedProfile?.completed || {},
-    progress: savedProfile?.progress || {},
-  };
+    app.story = story;
 
-  app.appInfo = await api.appInfo();
-  $("about-version").textContent =
-    `${app.appInfo.gameTitle} – version ${app.appInfo.version}. Built with Electron ${app.appInfo.electron}.`;
+    const inProg = app.progress.inProgress[storyId];
+    if (inProg && inProg.currentSceneId && story.scenes[inProg.currentSceneId]) {
+      const scene = story.scenes[inProg.currentSceneId];
+      if (scene.ending) {
+        // If left on an ending screen, start fresh
+        delete app.progress.inProgress[storyId];
+        saveProgress();
+        app.state = emptyState(story);
+      } else {
+        app.state = {
+          version: 2,
+          storyId: story.id,
+          sceneId: inProg.currentSceneId,
+          flags: inProg.flags || {},
+          visited: [inProg.currentSceneId],
+          finished: false,
+          endingKind: null,
+          ending: null,
+        };
+      }
+    } else {
+      app.state = emptyState(story);
+    }
 
-  $("link-privacy").addEventListener("click", (e) => {
-    e.preventDefault();
-    api.openExternal("https://aayushman-tech.github.io/boardroom-logic-app/");
-  });
+    showScreen("play");
+    renderCurrentScene();
+  } catch (err) {
+    showToast("Error loading story: " + err.message);
+  }
+}
 
-  initKeyboard();
-
-  $("brand").addEventListener("click", async () => {
-    if (app.story && app.state && !app.state.finished) await autosave();
-    app.story = null;
+function renderCurrentScene() {
+  const scene = app.story.scenes[app.state.sceneId];
+  if (!scene) {
+    showToast("Scene not found.");
     showScreen("home");
-    renderHome();
+    return;
+  }
+
+  // Check if this is an ending scene
+  if (scene.ending) {
+    handleEnding(scene.ending);
+    return;
+  }
+
+  // Regular scene rendering
+  $("chapter-marker").textContent = scene.chapter || "";
+  $("scene-title").textContent = scene.title || "";
+
+  // Arrival card
+  const arrivalSlot = $("arrival-slot");
+  arrivalSlot.replaceChildren();
+  if (scene.arrival && scene.arrival.body) {
+    const card = el("div", "arrival-card");
+    if (scene.arrival.type) {
+      card.appendChild(el("div", "arrival-tag", scene.arrival.type.toUpperCase()));
+    }
+    card.appendChild(el("div", "arrival-body", scene.arrival.body));
+    arrivalSlot.appendChild(card);
+  }
+
+  // Exhibits
+  const exhibitsSlot = $("exhibits-slot");
+  exhibitsSlot.replaceChildren();
+  if (Array.isArray(scene.exhibits) && scene.exhibits.length > 0) {
+    for (const ex of scene.exhibits) {
+      const rendered = renderExhibit(ex);
+      if (rendered) exhibitsSlot.appendChild(rendered);
+    }
+  }
+
+  // Narration
+  const narrationSlot = $("narration-slot");
+  narrationSlot.replaceChildren();
+  if (scene.narration) {
+    const paragraphs = String(scene.narration).split(/\n\n+/);
+    for (const p of paragraphs) {
+      if (p.trim()) {
+        narrationSlot.appendChild(el("p", "narration-p", p.trim()));
+      }
+    }
+  }
+
+  // Choices
+  const choicesSlot = $("choices-slot");
+  choicesSlot.replaceChildren();
+
+  const choices = visibleChoices(app.state, app.story);
+  const keyLabels = ["A", "B", "C", "D"];
+
+  choices.forEach((choice, idx) => {
+    const btn = el("button", "choice-btn");
+    btn.dataset.choiceId = choice.id;
+    btn.dataset.key = keyLabels[idx] || String(idx + 1);
+
+    const keyBadge = el("span", "choice-key", keyLabels[idx] || String(idx + 1));
+    const textSpan = el("span", "choice-text", choice.text);
+
+    btn.appendChild(keyBadge);
+    btn.appendChild(textSpan);
+
+    btn.addEventListener("click", () => {
+      onSelectChoice(choice.id);
+    });
+
+    choicesSlot.appendChild(btn);
   });
 
-  $("btn-settings").addEventListener("click", () => {
-    showScreen("settings");
-    $("set-theme").value = app.settings.theme;
-    $("set-motion").checked = !!app.settings.reduceMotion;
-    $("textsize-value").textContent = String(app.settings.textsize);
-  });
-  $("btn-back-home-3").addEventListener("click", () => { showScreen("home"); renderHome(); });
+  window.scrollTo(0, 0);
+}
+
+function onSelectChoice(choiceId) {
+  const result = choose(app.state, app.story, choiceId);
+  if (!result) return;
+
+  if (result.kind === "ending") {
+    handleEnding(result.ending);
+  } else {
+    // Autosave in-progress state
+    app.progress.inProgress[app.story.id] = {
+      currentSceneId: app.state.sceneId,
+      flags: app.state.flags,
+    };
+    saveProgress();
+    renderCurrentScene();
+  }
+}
+
+function handleEnding(ending) {
+  if (ending.kind === "win") {
+    // Mark completed
+    if (!app.progress.completed.includes(app.story.id)) {
+      app.progress.completed.push(app.story.id);
+    }
+    delete app.progress.inProgress[app.story.id];
+    saveProgress();
+
+    // Render Win Screen
+    $("win-title").textContent = ending.title || "Victory";
+    $("win-summary").textContent = ending.summary || "";
+
+    const takeawaysList = $("win-takeaways");
+    takeawaysList.replaceChildren();
+    const items = ending.takeaways || app.story.lessons || (ending.lesson ? [ending.lesson] : []);
+    for (const t of items) {
+      takeawaysList.appendChild(el("li", "takeaway-item", t));
+    }
+
+    showScreen("win");
+  } else {
+    // Game Over (Lose ending)
+    // Clear in-progress so next launch starts fresh
+    delete app.progress.inProgress[app.story.id];
+    saveProgress();
+
+    $("lose-title").textContent = ending.title || "Game Over";
+    $("lose-summary").textContent = ending.summary || "";
+    $("lose-reason").textContent = ending.reason || "A flawed business assumption proved fatal.";
+
+    showScreen("lose");
+  }
+}
+
+function restartCurrentStory() {
+  if (!app.story) return;
+  delete app.progress.inProgress[app.story.id];
+  saveProgress();
+  app.state = emptyState(app.story);
+  showScreen("play");
+  renderCurrentScene();
+}
+
+// ---------------- Event Listeners ----------------
+
+function setupEvents() {
+  // Topbar
+  $("btn-settings").addEventListener("click", () => showScreen("settings"));
+
+  // Settings
+  $("btn-settings-close").addEventListener("click", () => showScreen("home"));
+  $("btn-settings-back").addEventListener("click", () => showScreen("home"));
+
   $("set-theme").addEventListener("change", (e) => {
     app.settings.theme = e.target.value;
     applySettings();
     saveSettings();
   });
-  $("set-motion").addEventListener("change", (e) => {
-    app.settings.reduceMotion = e.target.checked;
-    applySettings();
-    saveSettings();
-  });
 
-  document.querySelectorAll(".stepper [data-step]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const step = Number(btn.dataset.step);
-      app.settings.textsize = Math.max(1, Math.min(5, (app.settings.textsize || 3) + step));
-      $("textsize-value").textContent = String(app.settings.textsize);
+  $("btn-font-smaller").addEventListener("click", () => {
+    const cur = app.settings.textsize ?? 3;
+    if (cur > 1) {
+      app.settings.textsize = cur - 1;
       applySettings();
       saveSettings();
-    });
+    }
   });
 
-  $("btn-check-stories").addEventListener("click", () => checkForStories(true));
-  $("btn-refresh-home").addEventListener("click", () => checkForStories(true));
-  $("btn-reset-progress").addEventListener("click", async () => {
-    app.profile = { completed: {}, progress: {} };
-    api.saveProfile(app.profile).catch(() => {});
-    showToast("Progress reset.");
-    renderHome();
+  $("btn-font-larger").addEventListener("click", () => {
+    const cur = app.settings.textsize ?? 3;
+    if (cur < 5) {
+      app.settings.textsize = cur + 1;
+      applySettings();
+      saveSettings();
+    }
   });
 
-  $("btn-back-home-1").addEventListener("click", async () => {
-    if (app.story && app.state && !app.state.finished) await autosave();
+  $("btn-check-stories").addEventListener("click", async () => {
+    showToast("Checking GitHub for new stories…");
+    await refreshStories(true);
+    showToast("Story list updated.");
+  });
+
+  $("btn-reset-progress").addEventListener("click", () => {
+    const ok = window.confirm(
+      "Reset all saved progress and completed stories? This cannot be undone."
+    );
+    if (ok) {
+      app.progress = { completed: [], inProgress: {} };
+      saveProgress();
+      renderHome();
+      showToast("All progress reset.");
+    }
+  });
+
+  $("link-privacy").addEventListener("click", (e) => {
+    e.preventDefault();
+    api.openExternal("https://aayushman-tech.github.io/spotlight-business-play-app/");
+  });
+
+  // Play Screen Actions
+  $("btn-back-home").addEventListener("click", () => {
+    if (app.state && !app.state.finished && app.story) {
+      app.progress.inProgress[app.story.id] = {
+        currentSceneId: app.state.sceneId,
+        flags: app.state.flags,
+      };
+      saveProgress();
+    }
     showScreen("home");
     renderHome();
   });
-  $("btn-back-home-2").addEventListener("click", () => {
-    app.story = null;
-    showScreen("home");
-    renderHome();
-  });
 
-  $("btn-begin").addEventListener("click", () => startPlay({ resume: false }));
-  $("btn-continue-save").addEventListener("click", () => startPlay({ resume: true }));
-  $("btn-replay").addEventListener("click", () => startPlay({ resume: false }));
-
-  $("btn-save-exit").addEventListener("click", async () => {
-    await autosave();
-    app.story = null;
-    app.state = null;
-    showScreen("home");
-    renderHome();
-    showToast("Progress saved.");
-  });
   $("btn-restart-story").addEventListener("click", () => {
-    if (!app.story) return;
-    startPlay({ resume: false });
+    const ok = window.confirm("Restart this story from Scene 1?");
+    if (ok) {
+      restartCurrentStory();
+    }
   });
 
-  $("btn-case").addEventListener("click", () => toggleCasePanel());
-  $("btn-case-close").addEventListener("click", () => toggleCasePanel(false));
+  // Win Screen Actions
+  $("btn-win-replay").addEventListener("click", () => {
+    restartCurrentStory();
+  });
 
-  showScreen("home");
-  renderHome();
-  checkForStories(true);
+  $("btn-win-home").addEventListener("click", () => {
+    showScreen("home");
+    renderHome();
+  });
+
+  // Lose Screen Actions
+  $("btn-lose-restart").addEventListener("click", () => {
+    restartCurrentStory();
+  });
+
+  $("btn-lose-home").addEventListener("click", () => {
+    showScreen("home");
+    renderHome();
+  });
+
+  // Keyboard navigation
+  window.addEventListener("keydown", (e) => {
+    // If typing in input, ignore
+    if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+
+    if (e.key === "Escape") {
+      const activeScreen = document.querySelector(".screen:not([hidden])");
+      if (activeScreen && activeScreen.id === "screen-settings") {
+        showScreen("home");
+      }
+      return;
+    }
+
+    // Play screen choice shortcuts
+    const playScreen = $("screen-play");
+    if (!playScreen.hidden) {
+      const key = e.key.toUpperCase();
+      let index = -1;
+      if (key === "1" || key === "A") index = 0;
+      else if (key === "2" || key === "B") index = 1;
+      else if (key === "3" || key === "C") index = 2;
+      else if (key === "4" || key === "D") index = 3;
+
+      if (index >= 0) {
+        const choiceBtns = document.querySelectorAll(".choice-btn");
+        if (choiceBtns[index]) {
+          e.preventDefault();
+          choiceBtns[index].click();
+        }
+      }
+    }
+  });
+
+  // Window focus auto-refresh (after 10+ minutes)
+  const TEN_MINUTES_MS = 10 * 60 * 1000;
+  window.addEventListener("focus", () => {
+    const now = Date.now();
+    if (now - app.lastFocusCheck > TEN_MINUTES_MS) {
+      app.lastFocusCheck = now;
+      refreshStories(true);
+    }
+  });
 }
 
-async function checkForStories(announce) {
-  let res;
+// ---------------- Init ----------------
+
+async function init() {
   try {
-    res = await refreshData({ online: true });
-  } catch {
-    setNetState("offline", "offline");
-    if (announce) banner("Could not reach the stories server. Cached stories remain playable.", "error");
-    renderHome();
-    return;
-  }
-  if (announce) {
-    if (res.offline && res.fallBackToDemo) {
-      banner("You're offline and there's no cache yet – playing the bundled demo story for now.", "error");
-    } else if (res.fallBackToDemo && !res.offline) {
-      banner("No story is published in the catalogue yet – playing the bundled demo story for now.", "error");
-    } else if (res.offline) {
-      banner("Offline – playing from cache. New stories need to be online.", "error");
-    } else {
-      showToast("Stories refreshed.");
+    app.appInfo = await api.appInfo();
+    if (app.appInfo) {
+      $("about-version").textContent = `Version ${app.appInfo.version}`;
     }
+  } catch {
+    $("about-version").textContent = "Version 1.1.0";
   }
-  renderHome();
+
+  setupEvents();
+  await loadSettings();
+  await loadProgress();
+  showScreen("home");
+  await refreshStories(true);
 }
 
 document.addEventListener("DOMContentLoaded", init);

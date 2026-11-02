@@ -1,10 +1,6 @@
-// validator-core.js - pure story validation for Boardroom Logic (no DOM, no Electron).
-// Used by tools/validate.js, tools/add-story.js and copied into the app (src/engine/story-validator.js).
-// Node built-ins only.
+// story-validator.mjs - Validator for Spotlight Business Play stories (Schema v2).
+// Pure module: Node built-ins only.
 
-const CARDINAL_WORDS = false; // word = non-empty whitespace-separated token (kept for clarity)
-
-// ---------- tiny JSON-Schema subset validator (draft-07 compatible for our schema) ----------
 function typeOk(value, type, nullable) {
   if (nullable === true && value === null) return true;
   if (Array.isArray(type)) {
@@ -35,12 +31,8 @@ const OPS = {
 };
 
 export function checkSchema(value, schema, path = "$") {
-  // returns array of error strings
   const errors = [];
-
   if (schema == null) return errors;
-
-  const apply = (subSchema, subValue, subPath) => checkSchema(subValue, subSchema, subPath);
 
   if (schema.type && !typeOk(value, schema.type, schema.nullable)) {
     return [`at ${path}: expected type ${schema.type}${schema.nullable ? " (or null)" : ""}, got ${describeType(value)}`];
@@ -53,35 +45,11 @@ export function checkSchema(value, schema, path = "$") {
       if (!(key in value)) errors.push(`at ${path}: missing required property "${key}"`);
     }
   }
-  // boolean logic
-  if (schema.not && checkSchema(value, schema.not, path).length === 0) {
-    errors.push(`at ${path}: must NOT match the "not" schema`);
-  }
-  if (schema.allOf) schema.allOf.forEach((s, i) => apply(s, value, `${path}`).forEach((e) => errors.push(e)));
-  if (schema.anyOf && !schema.anyOf.some((s) => checkSchema(value, s, path).length === 0)) {
-    errors.push(`at ${path}: does not match any of ${schema.anyOf.length} "anyOf" subschemas`);
-  }
-  if (schema.oneOf) {
-    const matching = schema.oneOf.filter((s) => checkSchema(value, s, path).length === 0);
-    if (matching.length !== 1) {
-      errors.push(`at ${path}: must match exactly one "oneOf" subschema (matched ${matching.length})`);
-    }
-  }
-  if (schema.if) {
-    const matchesIf = checkSchema(value, schema.if, path).length === 0;
-    if (matchesIf && schema.then && checkSchema(value, schema.then, path).length !== 0) {
-      errors.push(`at ${path}: matches "if" but violates "then"`);
-    }
-    if (!matchesIf && schema.else && checkSchema(value, schema.else, path).length !== 0) {
-      errors.push(`at ${path}: fails "if" and violates "else"`);
-    }
-  }
   for (const op of Object.keys(OPS)) {
     if (op in schema && !OPS[op](value, schema[op])) {
       errors.push(`at ${path}: fails "${op}" constraint ${JSON.stringify(schema[op])}`);
     }
   }
-  // object properties
   if (typeof value === "object" && value !== null && !Array.isArray(value)) {
     const props = schema.properties || {};
     for (const key of Object.keys(value)) {
@@ -89,15 +57,9 @@ export function checkSchema(value, schema, path = "$") {
         checkSchema(value[key], props[key], `${path}.${key}`).forEach((e) => errors.push(e));
       } else if (schema.additionalProperties === false) {
         errors.push(`at ${path}: additional property "${key}" is not allowed`);
-      } else if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
-        const sub = { ...schema.additionalProperties, required: undefined };
-        checkSchema(value[key], sub, `${path}.${key}`).forEach((e) => {
-          if (!e.includes("missing required")) errors.push(e);
-        });
       }
     }
   }
-  // array items
   if (Array.isArray(value) && schema.items && typeof schema.items === "object") {
     value.forEach((item, i) => checkSchema(item, schema.items, `${path}[${i}]`).forEach((e) => errors.push(e)));
   }
@@ -110,8 +72,8 @@ function describeType(v) {
   return typeof v;
 }
 
-// ---------- word counting ----------
 export function sceneWords(scene) {
+  if (!scene) return 0;
   let text = "";
   const push = (s) => { if (typeof s === "string") text += " " + s; };
   push(scene.narration);
@@ -119,7 +81,11 @@ export function sceneWords(scene) {
     push(scene.arrival.body);
     push(scene.arrival.subject);
   }
-  if (Array.isArray(scene.addNotes)) scene.addNotes.forEach(push);
+  if (scene.ending) {
+    push(scene.ending.summary);
+    push(scene.ending.reason);
+    push(scene.ending.lesson);
+  }
   if (Array.isArray(scene.exhibits)) {
     for (const ex of scene.exhibits) {
       push(ex.title);
@@ -132,282 +98,304 @@ export function sceneWords(scene) {
   return text.split(/\s+/).filter(Boolean).length;
 }
 
-// ---------- structural validation ----------
-// Returns { ok, errors, warnings, metrics: { words, pathScenes, pathDecisions, estimatedMinutes, endings, decisionScenes } }
+export function readingMetrics(scene) {
+  let text = (scene.narration || "") + " " + (scene.arrival?.body || "");
+  const words = text.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+  const sentences = text.split(/[.!?]+/).map((s) => s.trim()).filter(Boolean);
+  const sentenceCount = Math.max(1, sentences.length);
+  const avgSentenceLength = wordCount / sentenceCount;
+  return { wordCount, avgSentenceLength };
+}
 
 export function validateStory(data, options = {}) {
   const allowShort = options.allowShort === true;
   const errors = [];
   const warnings = [];
 
-  // 0) schema
-  const schemaErrors = checkSchema(data, options.schema || null, "$");
-  if (options.schema) schemaErrors.forEach((e) => errors.push(e));
+  if (options.schema) {
+    const schemaErrors = checkSchema(data, options.schema, "$");
+    schemaErrors.forEach((e) => errors.push(e));
+  }
 
   if (!data || typeof data !== "object") {
     return { ok: false, errors: ["story is not an object"], warnings, metrics: null };
   }
 
+  if (data.schemaVersion !== 2) {
+    errors.push(`schemaVersion must be 2, got ${data.schemaVersion}`);
+  }
+
   const scenes = data.scenes || {};
   const sceneIds = Object.keys(scenes);
-  const statIds = (data.stats || []).map((s) => s.id);
-  const statById = Object.fromEntries((data.stats || []).map((s) => [s.id, s]));
-  const characterIds = new Set((data.characters || []).map((c) => c.id));
 
-  const isEnding = (scene) => scene && scene.ending != null && scene.ending !== undefined && typeof scene.ending === "object";
+  const isEnding = (scene) => scene && scene.ending != null && typeof scene.ending === "object";
   const hasEndingField = (scene) => scene && scene.ending !== undefined && scene.ending != null;
-  const conditionKeys = (choice) => ["requireFlags", "hideIfFlags", "requireStats"].filter((k) => {
-    const v = choice[k];
-    return v != null && ((Array.isArray(v) && v.length > 0) || (typeof v === "object" && !Array.isArray(v) && Object.keys(v).length > 0));
-  });
-
-  const isPotentiallyVisible = (choice) => {
-    // Numeric impossibility check only. Flag conditions are assumed satisfiable elsewhere.
-    if (choice.requireStats) {
-      for (const [id, cond] of Object.entries(choice.requireStats)) {
-        const st = statById[id];
-        if (!st) return false;
-        const hi = st.max == null ? Infinity : st.max;
-        const lo = st.min == null ? -Infinity : st.min;
-        for (const [op, v] of Object.entries(cond)) {
-          if (op === "gte" && hi < v) return false;
-          if (op === "gt" && hi <= v) return false;
-          if (op === "lte" && lo > v) return false;
-          if (op === "lt" && lo >= v) return false;
-        }
-      }
-    }
-    return true;
-  };
+  const isDecision = (scene) => Array.isArray(scene && scene.choices) && scene.choices.length >= 2;
 
   const flagsSet = new Set();
   const flagsUsed = new Set();
 
   for (const [id, scene] of Object.entries(scenes)) {
     if (!scene || typeof scene !== "object") continue;
-    if (hasEndingField(scene) && Array.isArray(scene.choices)) {
-      errors.push(`scene ${id}: has both "ending" object and "choices" - an ending scene must have no choices`);
+
+    const rm = readingMetrics(scene);
+    if (rm.wordCount > 180) {
+      warnings.push(`scene ${id}: exceeds 180 words (${rm.wordCount} words)`);
     }
-    if (!isEnding(scene)) {
+    if (rm.avgSentenceLength > 22) {
+      warnings.push(`scene ${id}: avg sentence length ${rm.avgSentenceLength.toFixed(1)} words > 22`);
+    }
+
+    if (hasEndingField(scene) && Array.isArray(scene.choices) && scene.choices.length > 0) {
+      errors.push(`scene ${id}: has both "ending" and "choices" - ending scenes must not have choices`);
+    }
+
+    if (isEnding(scene)) {
+      if (scene.ending.kind === "lose") {
+        if (!scene.ending.reason || typeof scene.ending.reason !== "string" || scene.ending.reason.trim().length === 0) {
+          errors.push(`scene ${id}: lose ending must have a non-empty "reason" explaining why the decision failed in simple business terms`);
+        }
+      }
+    } else {
       const choices = Array.isArray(scene.choices) ? scene.choices : [];
-      const visible = choices.filter(isPotentiallyVisible);
-      if (visible.length === 0) {
-        errors.push(`scene ${id}: dead end - no potentially visible choices in a non-ending scene`);
+      if (choices.length === 0) {
+        errors.push(`scene ${id}: non-ending scene has 0 choices (dead end)`);
+      }
+      if (choices.length > 4) {
+        errors.push(`scene ${id}: has ${choices.length} choices - maximum allowed is 4`);
       }
       for (const ch of choices) {
         if (!ch.next) {
           errors.push(`scene ${id}: choice "${ch.id}" has no "next"`);
           continue;
         }
-        if (!scenes[ch.next]) errors.push(`scene ${id}: choice "${ch.id}" points to unknown scene "${ch.next}"`);
-      }
-    }
-    if (Array.isArray(scene.choices)) {
-      for (const ch of scene.choices) {
+        if (!scenes[ch.next]) {
+          errors.push(`scene ${id}: choice "${ch.id}" points to unknown scene "${ch.next}"`);
+        }
         (ch.setFlags || []).forEach((f) => flagsSet.add(f));
         (ch.clearFlags || []).forEach((f) => flagsUsed.add(f));
         (ch.requireFlags || []).forEach((f) => flagsUsed.add(f));
         (ch.hideIfFlags || []).forEach((f) => flagsUsed.add(f));
-        if (ch.requireStats) {
-          for (const statId of Object.keys(ch.requireStats)) {
-            if (!statById[statId]) errors.push(`scene ${id}: choice "${ch.id}" references unknown stat "${statId}" in requireStats`);
-          }
-        }
-        if (ch.effects) {
-          for (const statId of Object.keys(ch.effects)) {
-            if (!statById[statId]) errors.push(`scene ${id}: choice "${ch.id}" references unknown stat "${statId}" in effects`);
-          }
-        }
-        if (ch.logic && typeof ch.logic.quality !== "number") {
-          errors.push(`scene ${id}: choice "${ch.id}" has bad logic.quality`);
-        }
-        if (ch.logic && (ch.logic.why == null || ch.logic.why.trim().length < 30)) {
-          errors.push(`scene ${id}: choice "${ch.id}" logic.why must be at least 30 chars`);
-        }
-        if (ch.logic && (ch.logic.quality < -2 || ch.logic.quality > 2)) {
-          errors.push(`scene ${id}: choice "${ch.id}" logic.quality must be -2..2`);
-        }
       }
     }
   }
 
   for (const f of flagsUsed) {
     if (!flagsSet.has(f)) {
-      errors.push(`flag "${f}" is used (requireFlags/hideIfFlags/clearFlags) but never set by any choice`);
+      errors.push(`flag "${f}" is checked or cleared, but never set by any choice`);
     }
   }
 
-  // stats references from failScene
-  for (const st of data.stats || []) {
-    if (st.failBelow != null && !st.failScene) {
-      errors.push(`stat "${st.id}" has failBelow but no failScene`);
-    }
-    if (st.failScene && !scenes[st.failScene]) {
-      errors.push(`stat "${st.id}" failScene "${st.failScene}" does not exist`);
-    }
-  }
-
-  // 1) reachability
   const edges = {};
-  const addEdge = (a, b) => {
-    if (!scenes[a] || !scenes[b]) return;
-    (edges[a] ||= []).push(b);
-  };
   for (const [id, scene] of Object.entries(scenes)) {
-    if (!scene || typeof scene !== "object") continue;
-    if (isEnding(scene)) continue;
-    for (const ch of scene.choices || []) addEdge(id, ch.next);
-    for (const st of data.stats || []) {
-      if (st.failScene) addEdge(id, st.failScene);
-    }
+    if (!scene || typeof scene !== "object" || isEnding(scene)) continue;
+    edges[id] = (scene.choices || []).map((c) => c.next).filter((nxt) => !!scenes[nxt]);
   }
+
   const start = data.startScene;
+  let reachableFromStart = new Set();
   if (!scenes[start]) {
-    errors.push(`startScene "${start}" does not exist`);
+    errors.push(`startScene "${start}" does not exist in scenes`);
   } else {
-    const reachable = new Set([start]);
+    reachableFromStart.add(start);
     const queue = [start];
-    while (queue.length) {
+    while (queue.length > 0) {
       const cur = queue.shift();
-      for (const n of edges[cur] || []) {
-        if (!reachable.has(n)) {
-          reachable.add(n);
-          queue.push(n);
+      for (const nxt of edges[cur] || []) {
+        if (!reachableFromStart.has(nxt)) {
+          reachableFromStart.add(nxt);
+          queue.push(nxt);
         }
       }
     }
     for (const id of sceneIds) {
-      if (!reachable.has(id)) warnings.push(`scene ${id} is NOT reachable from startScene`);
+      if (!reachableFromStart.has(id)) {
+        errors.push(`scene "${id}" is NOT reachable from startScene`);
+      }
     }
+  }
 
-    // 2+3) shortest path to any ending (minimising estimatedMinutes weight)
-    // node-weighted Dijkstra
-    const END = "__END__";
-    const dist = new Map();
-    dist.set(start, 0);
-    const node = { [start]: { w: sceneWords(scenes[start]), isEnd: isEnding(scenes[start]), decisions: isDecision(scenes[start]) ? 1 : 0 } };
-    for (const id of sceneIds) {
-      if (id === start) continue;
-      node[id] = {
-        w: sceneWords(scenes[id]),
-        isEnd: isEnding(scenes[id]),
-        decisions: isDecision(scenes[id]) ? 1 : 0,
-      };
+  const endingSceneIds = sceneIds.filter((id) => isEnding(scenes[id]));
+  const canReachEnding = new Set(endingSceneIds);
+  let reverseEdges = {};
+  for (const [from, toList] of Object.entries(edges)) {
+    for (const to of toList) {
+      (reverseEdges[to] ||= []).push(from);
     }
-    const relax = () => {
-      // simple priority queue via array (story graphs are small, < 200 nodes)
-      const queue = [[0, start, { words: node[start].w, scenes: 1, decisions: node[start].decisions, path: [start] }]];
-      const visited = new Set();
-      let best = null;
-      while (queue.length) {
-        queue.sort((a, b) => a[0] - b[0]);
-        const [, cur, info] = queue.shift();
-        if (visited.has(cur)) continue;
-        visited.add(cur);
-        if (node[cur].isEnd) {
-          if (!best || info.words < best.words || (info.words === best.words && info.decisions < best.decisions)) {
-            best = info;
-          }
-          continue;
-        }
-        for (const nxt of edges[cur] || []) {
-          if (visited.has(nxt)) continue;
-          const nInfo = {
-            words: info.words + node[nxt].w,
-            scenes: info.scenes + 1,
-            decisions: info.decisions + node[nxt].decisions,
-            path: [...info.path, nxt],
-          };
-          const weight = nInfo.words / 200 + nInfo.decisions * 0.75;
-          queue.push([weight, nxt, nInfo]);
-        }
+  }
+  const revQueue = [...endingSceneIds];
+  while (revQueue.length > 0) {
+    const cur = revQueue.shift();
+    for (const prev of reverseEdges[cur] || []) {
+      if (!canReachEnding.has(prev)) {
+        canReachEnding.add(prev);
+        revQueue.push(prev);
       }
-      return best;
+    }
+  }
+  for (const id of reachableFromStart) {
+    if (!canReachEnding.has(id)) {
+      errors.push(`scene "${id}" cannot reach any ending (infinite trap loop)`);
+    }
+  }
+
+  const winEndings = endingSceneIds.filter((id) => scenes[id].ending.kind === "win");
+  const loseEndings = endingSceneIds.filter((id) => scenes[id].ending.kind === "lose");
+
+  if (winEndings.length < 1 || winEndings.length > 2) {
+    errors.push(`story must have 1-2 win endings, found ${winEndings.length}`);
+  }
+  if (!allowShort && loseEndings.length < 8) {
+    errors.push(`story must have at least 8 lose endings, found ${loseEndings.length}`);
+  }
+
+  let bestWinPath = null;
+  if (scenes[start] && winEndings.length > 0) {
+    const nodeCost = (id) => {
+      const sc = scenes[id];
+      const w = sceneWords(sc);
+      const d = isDecision(sc) ? 1 : 0;
+      return { words: w, isDec: d, weight: w / 200 + d * 0.75 };
     };
-    const best = relax();
-    if (!best) {
-      errors.push("no ending is reachable from startScene");
-    } else {
-      const estimatedMinutes = Math.round(best.words / 200 + best.decisions * 0.75);
-      var metrics = {
-        shortestPathWords: best.words,
-        shortestPathScenes: best.scenes,
-        shortestPathDecisions: best.decisions,
-        estimatedMinutes,
-        shortestPath: best.path,
-        decisionScenes: sceneIds.filter((id) => isDecision(scenes[id])).length,
-      };
-      if (!allowShort) {
-        if (best.scenes < 32) {
-          errors.push(`shortest path has ${best.scenes} scenes, needs >= 32`);
-        }
-        if (best.decisions < 20) {
-          errors.push(`shortest path has ${best.decisions} decision scenes, needs >= 20`);
-        }
-        if (best.words < 3600) {
-          errors.push(`shortest path has ${best.words} words, needs >= 3600`);
-        }
-        if (estimatedMinutes < 30) {
-          errors.push(`computed estimatedMinutes ${estimatedMinutes} < 30`);
-        }
+
+    const pq = [
+      [
+        nodeCost(start).weight,
+        start,
+        {
+          words: nodeCost(start).words,
+          scenes: 1,
+          decisions: nodeCost(start).isDec,
+          path: [start],
+        },
+      ],
+    ];
+    const visited = new Set();
+
+    while (pq.length > 0) {
+      pq.sort((a, b) => a[0] - b[0]);
+      const [, cur, info] = pq.shift();
+      if (visited.has(cur)) continue;
+      visited.add(cur);
+
+      const sc = scenes[cur];
+      if (isEnding(sc) && sc.ending.kind === "win") {
+        bestWinPath = info;
+        break;
+      }
+
+      for (const nxt of edges[cur] || []) {
+        if (visited.has(nxt)) continue;
+        const c = nodeCost(nxt);
+        const nextInfo = {
+          words: info.words + c.words,
+          scenes: info.scenes + 1,
+          decisions: info.decisions + c.isDec,
+          path: [...info.path, nxt],
+        };
+        pq.push([nextInfo.words / 200 + nextInfo.decisions * 0.75, nxt, nextInfo]);
       }
     }
   }
 
-  // 4) endings
-  const endingKinds = [];
-  for (const [id, scene] of Object.entries(scenes)) {
-    if (isEnding(scene)) {
-      endingKinds.push(scene.ending.kind);
-    }
-  }
-  if (!endingKinds.length) errors.push("no ending scenes");
-  const distinctKinds = [...new Set(endingKinds)];
-  if (!endingKinds.includes("failure")) errors.push('no ending kind "failure"');
-  if (!endingKinds.includes("triumph")) errors.push('no ending kind "triumph"');
-  if (!allowShort && distinctKinds.length < 3) {
-    errors.push(`only ${distinctKinds.length} distinct ending kind(s) - need >= 3`);
-  }
-  if (endingKinds.length === 0) { errors.push('need at least one ending kind'); }
-
-  // 5) decision scenes
-  const decisionScenes = sceneIds.filter((id) => isDecision(scenes[id]));
-  const decisionsWithLogic = decisionScenes.filter((id) =>
-    (scenes[id].choices || []).some((ch) => ch.logic && ch.logic.why && ch.logic.why.trim().length >= 30)
-  );
-  if (!allowShort && decisionScenes.length > 0) {
-    const ratio = decisionsWithLogic.length / decisionScenes.length;
-    if (ratio < 0.6) {
-      errors.push(`only ${decisionsWithLogic.length}/${decisionScenes.length} decision scenes have a logic rating with why - need >= 60%`);
-    }
-  }
-  for (const id of decisionScenes) {
-    const n = (scenes[id].choices || []).length;
-    if (n < 2 || n > 4) {
-      errors.push(`decision scene ${id} has ${n} choices - must have 2-4`);
-    }
-  }
-
-  const cleanErrors = [...new Set(errors.filter(Boolean))];
-  const metricsOut = metrics || {
+  let metrics = {
     shortestPathWords: null,
     shortestPathScenes: null,
     shortestPathDecisions: null,
     estimatedMinutes: null,
     shortestPath: [],
-    decisionScenes: decisionScenes.length,
+    winEndingsCount: winEndings.length,
+    loseEndingsCount: loseEndings.length,
+    totalScenes: sceneIds.length,
+    decisionScenes: sceneIds.filter((id) => isDecision(scenes[id])).length,
+    temptingWrongOptionRatio: null,
   };
-  if (allowShort && metricsOut.estimatedMinutes == null) {
-    metricsOut.estimatedMinutes = null;
-  }
-  return { ok: cleanErrors.length === 0, errors: cleanErrors, warnings: [...new Set(warnings)], metrics: metricsOut, distinctEndingKinds: distinctKinds, totalEndings: endingKinds.length };
 
-  function isDecision(scene) {
-    return Array.isArray(scene && scene.choices) && scene.choices.length >= 2;
+  if (!bestWinPath) {
+    errors.push("no win ending is reachable from startScene");
+  } else {
+    const estMinutes = Math.round(bestWinPath.words / 200 + bestWinPath.decisions * 0.75);
+    metrics.shortestPathWords = bestWinPath.words;
+    metrics.shortestPathScenes = bestWinPath.scenes;
+    metrics.shortestPathDecisions = bestWinPath.decisions;
+    metrics.estimatedMinutes = estMinutes;
+    metrics.shortestPath = bestWinPath.path;
+
+    if (!allowShort) {
+      if (bestWinPath.scenes < 32) {
+        errors.push(`shortest winning path has ${bestWinPath.scenes} scenes, needs >= 32`);
+      }
+      if (bestWinPath.decisions < 20) {
+        errors.push(`shortest winning path has ${bestWinPath.decisions} decision scenes, needs >= 20`);
+      }
+      if (bestWinPath.words < 3600) {
+        errors.push(`shortest winning path has ${bestWinPath.words} words, needs >= 3600`);
+      }
+      if (estMinutes < 30) {
+        errors.push(`computed estimatedMinutes ${estMinutes} < 30`);
+      }
+    }
+
+    const winningPathDecisions = bestWinPath.path.filter((id) => isDecision(scenes[id]));
+    let decisionsWithQuickLose = 0;
+
+    for (let i = 0; i < bestWinPath.path.length - 1; i++) {
+      const curId = bestWinPath.path[i];
+      const sc = scenes[curId];
+      if (!isDecision(sc)) continue;
+
+      const winningNext = bestWinPath.path[i + 1];
+      const wrongChoices = (sc.choices || []).filter((ch) => ch.next !== winningNext);
+
+      let foundTemptingLose = false;
+      for (const wch of wrongChoices) {
+        const q = [[wch.next, 1]];
+        const seen = new Set([wch.next]);
+        while (q.length > 0) {
+          const [nId, depth] = q.shift();
+          const nSc = scenes[nId];
+          if (nSc && isEnding(nSc) && nSc.ending.kind === "lose") {
+            foundTemptingLose = true;
+            break;
+          }
+          if (depth < 4) {
+            for (const follow of edges[nId] || []) {
+              if (!seen.has(follow)) {
+                seen.add(follow);
+                q.push([follow, depth + 1]);
+              }
+            }
+          }
+        }
+        if (foundTemptingLose) break;
+      }
+      if (foundTemptingLose) {
+        decisionsWithQuickLose++;
+      }
+    }
+
+    const ratio = winningPathDecisions.length > 0 ? decisionsWithQuickLose / winningPathDecisions.length : 1;
+    metrics.temptingWrongOptionRatio = ratio;
+
+    if (!allowShort && winningPathDecisions.length > 0 && ratio < 0.7) {
+      errors.push(
+        `only ${(ratio * 100).toFixed(1)}% of decision scenes on winning path offer a quick lose branch within 4 scenes (needs >= 70%)`
+      );
+    }
   }
+
+  const cleanErrors = [...new Set(errors.filter(Boolean))];
+  const cleanWarnings = [...new Set(warnings.filter(Boolean))];
+
+  return {
+    ok: cleanErrors.length === 0,
+    errors: cleanErrors,
+    warnings: cleanWarnings,
+    metrics,
+  };
 }
 
-// ---------- repo-level validation ----------
 export function validateManifestEntry(entry, storyData, manifest, options = {}) {
   const problems = [];
   if (!storyData) return { ok: false, problems: ["story file missing or unparseable"] };
@@ -415,7 +403,6 @@ export function validateManifestEntry(entry, storyData, manifest, options = {}) 
   if (entry.title !== storyData.title) problems.push(`manifest title mismatch for ${entry.id}`);
   if (entry.subtitle !== storyData.subtitle) problems.push(`manifest subtitle mismatch for ${entry.id}`);
   if (entry.publishDate !== storyData.publishDate) problems.push(`manifest publishDate mismatch for ${entry.id}`);
-  if (entry.difficulty !== storyData.difficulty) problems.push(`manifest difficulty mismatch for ${entry.id}`);
   if (options.sha256 && entry.sha256 && entry.sha256 !== options.sha256) {
     problems.push(`sha256 mismatch for ${entry.id}`);
   }
@@ -426,9 +413,9 @@ export function validateManifestEntry(entry, storyData, manifest, options = {}) 
     problems.push(`file field must point into stories/ for ${entry.id}`);
   }
   if (typeof entry.estimatedMinutes !== "number" || !Number.isInteger(entry.estimatedMinutes) || entry.estimatedMinutes < 30) {
-    problems.push(`estimatedMinutes missing/invalid for ${entry.id}`);
+    problems.push(`estimatedMinutes missing or < 30 for ${entry.id}`);
   }
-  if (JSON.stringify(entry.tags.slice().sort()) !== JSON.stringify([...storyData.tags].sort())) {
+  if (JSON.stringify(entry.tags?.slice().sort()) !== JSON.stringify([...(storyData.tags || [])].sort())) {
     problems.push(`tags mismatch for ${entry.id}`);
   }
   return { ok: problems.length === 0, problems };

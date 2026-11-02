@@ -1,7 +1,7 @@
-// main.js - Boardroom Logic main process. The ONLY place with network access.
+// main.js - Spotlight Business Play main process. The ONLY place with network access.
 "use strict";
 
-const { app, BrowserWindow, ipcMain, shell, net } = require("electron");
+const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
 const fsp = require("node:fs/promises");
@@ -51,12 +51,14 @@ function storiesBaseUrl() {
 }
 
 async function fetchRawText(urlPath, timeoutMs) {
-  const cb = config.fetch.cacheBusting ? `${urlPath.includes("?") ? "&" : "?"}cb=${Date.now()}-${Math.floor(Math.random() * 1e6)}` : "";
+  const cb = config.fetch.cacheBusting
+    ? `${urlPath.includes("?") ? "&" : "?"}cb=${Date.now()}-${Math.floor(Math.random() * 1e6)}`
+    : "";
   const url = `${storiesBaseUrl()}/${urlPath}${cb}`;
   return new Promise((resolve, reject) => {
     const req = https.get(
       url,
-      { headers: { "User-Agent": "BoardroomLogic/1.0 (+stories sync)", Accept: "application/json" } },
+      { headers: { "User-Agent": "SpotlightBusinessPlay/1.1.0 (+stories sync)", Accept: "application/json" } },
       (res) => {
         if (res.statusCode !== 200) {
           res.resume();
@@ -80,7 +82,7 @@ async function fetchRawText(urlPath, timeoutMs) {
 const validStoryCache = new Map();
 
 async function checkStoryFile(entry, timeoutMs) {
-  // returns { status, story? } with status ok | hash_mismatch | schema_invalid | missing | min_app_version
+  // returns { status, story? } with status ok | hash_mismatch | schema_invalid | unreachable
   let text;
   try {
     text = await fetchRawText(entry.file, timeoutMs);
@@ -99,7 +101,7 @@ async function checkStoryFile(entry, timeoutMs) {
     return { status: "schema_invalid" };
   }
   const { validator } = await loadEngineModules();
-  const result = validator.validateStory(data, { allowShort: false, schema });
+  const result = validator.validateStory(data, { allowShort: true, schema });
   if (!result.ok) {
     return { status: "schema_invalid" };
   }
@@ -115,13 +117,12 @@ async function loadCachedStory(relPath) {
   const data = await readJson(relPath, null);
   if (!data) return null;
   const { validator } = await loadEngineModules();
-  const result = validator.validateStory(data, { allowShort: false, schema });
+  const result = validator.validateStory(data, { allowShort: true, schema });
   return result.ok ? data : null;
 }
 
 // "refresh" IPC: returns a manifest view for the renderer.
 async function refreshStories({ online = true } = {}) {
-  const { appVersion } = config;
   const timeoutMs = config.fetch.timeoutMs;
   let manifestText = null;
   let usedNetwork = false;
@@ -144,18 +145,16 @@ async function refreshStories({ online = true } = {}) {
       manifest = null;
     }
   }
-  let offline = false;
   if (!manifest) {
     manifest = await readJson(config.storage.manifest, null);
-    offline = usedNetwork === false;
   }
 
-  if (!manifest || manifest.schemaVersion !== 1 || !Array.isArray(manifest.stories)) {
-    // No network manifest and no cache: fall back to the bundled demo so first launch always works.
+  if (!manifest || manifest.schemaVersion !== 2 || !Array.isArray(manifest.stories)) {
+    // No network manifest and no cache: fall back to the bundled default story so first launch always works.
     const demoEntry = await buildDemoFallbackEntry();
     return {
       offline: true,
-      error: true,
+      error: !demoEntry,
       fallBackToDemo: !!demoEntry,
       minAppVersion: null,
       storyStatus: {},
@@ -163,7 +162,7 @@ async function refreshStories({ online = true } = {}) {
     };
   }
 
-  // Check every story (hash + schema) in parallel; small repos so this is cheap.
+  // Check every story (hash + schema) in parallel
   const statuses = {};
   const results = await Promise.allSettled(
     manifest.stories.map(async (entry) => {
@@ -183,9 +182,8 @@ async function refreshStories({ online = true } = {}) {
         : "unreachable";
     }
   }
-  // When offline, fall back to cached story files (with hash + schema re-check).
+  // When offline, fall back to cached story files
   if (!usedNetwork) {
-    const storedManifest = manifest && !manifest.__fromNetwork ? manifest : null;
     for (const entry of manifest.stories) {
       if (storyStatus[entry.id] && storyStatus[entry.id] !== "ok") continue;
       const story = await loadCachedStory(
@@ -195,10 +193,15 @@ async function refreshStories({ online = true } = {}) {
         validStoryCache.set(entry.id, story);
         storyStatus[entry.id] = "ok";
       } else {
-        storyStatus[entry.id] = "unreachable";
+        // Also check if it matches the bundled default story
+        const bundled = await buildDemoFallbackEntry();
+        if (bundled && bundled.id === entry.id) {
+          storyStatus[entry.id] = "ok";
+        } else {
+          storyStatus[entry.id] = "unreachable";
+        }
       }
     }
-    void storedManifest;
   }
 
   const demoEntry = manifest.stories.length === 0 ? await buildDemoFallbackEntry() : null;
@@ -213,7 +216,7 @@ async function refreshStories({ online = true } = {}) {
   };
 }
 
-// Builds a fallback entry from the bundled demo story, so the app always has something playable
+// Builds a fallback entry from the bundled default story, so the app always has something playable
 // (first launch, offline with no cache, or an empty catalogue).
 async function buildDemoFallbackEntry() {
   const demoPath = path.join(__dirname, "..", "..", config.bundledDemoPath);
@@ -232,7 +235,7 @@ async function buildDemoFallbackEntry() {
     title: demo.title,
     subtitle: demo.subtitle,
     publishDate: demo.publishDate,
-    estimatedMinutes: result.metrics?.estimatedMinutes ?? 5,
+    estimatedMinutes: result.metrics?.estimatedMinutes ?? 35,
     difficulty: demo.difficulty,
     tags: demo.tags,
     file: config.bundledDemoPath,
@@ -251,14 +254,19 @@ function registerIpc() {
   ipcMain.handle("stories:refresh", async (_e, { online = true } = {}) => refreshStories({ online }));
   ipcMain.handle("story:load", async (_e, storyId) => {
     if (validStoryCache.has(storyId)) return validStoryCache.get(storyId);
-    // offline-before-refresh path: try cache directly
+    // Try bundled default story
+    const bundled = await buildDemoFallbackEntry();
+    if (bundled && bundled.id === storyId && validStoryCache.has(storyId)) {
+      return validStoryCache.get(storyId);
+    }
+    // Try cache directly
     const story = await loadCachedStory(path.join(config.storage.storyDir, `${storyId}.json`));
     if (story) validStoryCache.set(storyId, story);
     return story || null;
   });
-  ipcMain.handle("profile:load", () => readJson(config.storage.profile, {}));
-  ipcMain.handle("profile:save", (_e, profile) => writeJson(config.storage.profile, profile));
-  ipcMain.handle("settings:load", () => readJson(config.storage.settings, {}));
+  ipcMain.handle("progress:load", () => readJson(config.storage.progress, { completed: [], inProgress: {} }));
+  ipcMain.handle("progress:save", (_e, progress) => writeJson(config.storage.progress, progress));
+  ipcMain.handle("settings:load", () => readJson(config.storage.settings, { theme: "system", fontSize: "medium" }));
   ipcMain.handle("settings:save", (_e, settings) => writeJson(config.storage.settings, settings));
   ipcMain.handle("config:get", () => ({
     stories: config.stories,
@@ -286,13 +294,15 @@ function registerIpc() {
 
 // ---------- window ----------
 function createWindow() {
+  const iconPath = path.join(__dirname, "..", "..", "build", "icon.png");
   const win = new BrowserWindow({
     width: 1280,
     height: 800,
     minWidth: 900,
     minHeight: 600,
     autoHideMenuBar: true,
-    backgroundColor: "#0e1420",
+    backgroundColor: "#0e172e",
+    icon: fs.existsSync(iconPath) ? iconPath : undefined,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, "..", "preload.js"),
