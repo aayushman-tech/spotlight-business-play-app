@@ -3,7 +3,7 @@
 
 module.exports = {
   // Display name of the game (used in the window title and UI).
-  gameTitle: "Spotlight Business Play",
+  gameTitle: "Spotlight Business",
 
   // The public stories repository the app checks on launch.
   stories: {

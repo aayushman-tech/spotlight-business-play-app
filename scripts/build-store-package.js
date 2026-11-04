@@ -14,8 +14,8 @@ async function main() {
   const electronBuilder = require("electron-builder");
   const { Platform, Arch } = electronBuilder;
   const config = {
-    appId: "com.spotlightbusinessplay.app",
-    productName: "Spotlight Business Play",
+    appId: "com.spotlightbusiness.app",
+    productName: "Spotlight Business",
     directories: {
       buildResources: path.join(root, "..", "build"),
       output: "release",
@@ -25,13 +25,13 @@ async function main() {
       identityName: identity.identityName,
       publisher: identity.publisher,
       publisherDisplayName: identity.publisherDisplayName,
-      applicationId: "SpotlightBusinessPlay",
-      displayName: "Spotlight Business Play",
+      applicationId: "SpotlightBusiness",
+      displayName: "Spotlight Business",
       backgroundColor: "#0e172e",
       languages: ["en-US"],
       showNameOnTiles: true,
       setBuildNumber: false,
-      artifactName: "SpotlightBusinessPlay-${version}-${arch}.appx",
+      artifactName: "SpotlightBusiness-${version}-${arch}.appx",
     },
     win: {
       icon: path.join(root, "..", "build", "icon.ico"),

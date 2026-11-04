@@ -1,7 +1,7 @@
 {
-  "name": "spotlight-business-play",
-  "productName": "Spotlight Business Play",
-  "version": "1.1.0",
+  "name": "spotlight-business",
+  "productName": "Spotlight Business",
+  "version": "1.2.0",
   "description": "A 90s-style choose-your-path business adventure game. Read the scene, make the call, build an empire or face game over.",
   "author": "Spotlight-Aayushman",
   "license": "MIT",
@@ -23,8 +23,8 @@
     "screenshots": "node scripts/take-screenshots.mjs"
   },
   "build": {
-    "appId": "com.spotlightbusinessplay.app",
-    "productName": "Spotlight Business Play",
+    "appId": "com.spotlightbusiness.app",
+    "productName": "Spotlight Business",
     "directories": {
       "buildResources": "build",
       "output": "release"
@@ -35,7 +35,7 @@
     ],
     "win": {
       "icon": "build/icon.ico",
-      "artifactName": "SpotlightBusinessPlay-Setup-${version}-${arch}.${ext}",
+      "artifactName": "SpotlightBusiness-Setup-${version}-${arch}.${ext}",
       "target": [
         {
           "target": "nsis",
@@ -52,7 +52,7 @@
       "allowToChangeInstallationDirectory": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Spotlight Business Play"
+      "shortcutName": "Spotlight Business"
     },
     "publish": null
   },
